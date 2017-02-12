@@ -22,6 +22,7 @@ import numpy as np
 from scipy.stats import chi2
 
 from .util import write_kwargs, read_kwargs
+from .star import Star
 
 class Outliers(object):
     """The base class for handling outliers.
@@ -150,7 +151,7 @@ class MADOutliers(Outliers):
 
     where nmad is a parameter specified by the user.
 
-    The user can specify this parameter in one of two ways.  
+    The user can specify this parameter in one of two ways.
 
         1. The user can specify nmad directly.
         2. The user can specify nsigma, in which case nmad = sqrt(pi/2) nsigma, the equivalent
@@ -248,22 +249,24 @@ class ChisqOutliers(Outliers):
             return self.ndof * dof
         else:
             return chi2.isf(self.prob, dof)
-        
+
     def removeOutliers(self, stars, logger=None):
-        """Remove outliers from a list of stars based on their chisq values.
+        """Remove outliers (by marking them) from a list of stars based on their chisq values.
 
         :param stars:       A list of Star instances
         :param logger:      A logger object for logging debug info. [default: None]
 
-        :returns: stars, nremoved   A new list of stars without outliers, and how many outliers
+        :returns: stars, nremoved   A new list of stars with outliers marked, and how many outliers
                                     were removed.
         """
-        nstars = len(stars)
+        inliers = [i for i, s in enumerate(stars) if not s.outlier]
+
+        nstars = len(inliers)
         if logger:
             logger.debug("Checking %d stars for outliers", nstars)
 
-        chisq = np.array([ s.fit.chisq for s in stars ])
-        dof = np.array([ s.fit.dof for s in stars ])
+        chisq = np.array([ s.fit.chisq for s in stars if not s.outlier ])
+        dof = np.array([ s.fit.dof for s in stars if not s.outlier ])
 
         thresh = np.array([ self._get_thresh(d) for d in dof ])
 
@@ -276,7 +279,7 @@ class ChisqOutliers(Outliers):
                 logger.debug("Minimum dof = %d with thresh = %f",min_dof,self._get_thresh(min_dof))
                 logger.debug("Maximum dof = %d with thresh = %f",max_dof,self._get_thresh(max_dof))
 
-        nremoved = np.sum(chisq > thresh)
+        nremoved = np.sum(chisq >= thresh)
 
         if logger:
             logger.info("Found %d stars with chisq > thresh", nremoved)
@@ -284,26 +287,39 @@ class ChisqOutliers(Outliers):
             logger.debug("thresh = %s",thresh[chisq > thresh])
 
         if nremoved == 0:
-            good_stars = stars
+            new_stars = stars
         elif self.max_remove is None or nremoved <= self.max_remove:
-            good = chisq <= thresh
-            good_stars = [ s for g, s in zip(good, stars) if g ]
+            new_stars = []
+            j = 0
+            for s in stars:
+                if s.outlier:
+                    new_stars.append(s)
+                else:
+                    new_stars.append(Star(s.data, s.fit, outlier=s.fit.chisq>=thresh[j], reserve=s.reserve))
+                    j += 1
         else:
             # Since the thresholds are not necessarily all equal, this might be tricky to
             # figure out which ones should be removed.
-            # e.g. if max_remove == 1 and we have items with 
+            # e.g. if max_remove == 1 and we have items with
             #    chisq = 20, thresh = 15
             #    chisq = 40, thresh = 32
             # which one should we remove?
             # The first has larger chisq/thresh, and the second has larger chisq - thresh.
             # I semi-arbitrarily remove based on the difference.
-            nremoved  = self.max_remove
+            nremoved = self.max_remove
             diff = chisq - thresh
             new_thresh_index = np.argpartition(diff, -nremoved)[-nremoved]
             new_thresh = diff[new_thresh_index]
-            good = diff < new_thresh
-            good_stars = [ s for g, s in zip(good, stars) if g ]
 
-        assert nremoved == len(stars) - len(good_stars)
-        return good_stars, nremoved
+            new_stars = []
+            j = 0
+            for s in stars:
+                if s.outlier:
+                    new_stars.append(s)
+                else:
+                    new_stars.append(Star(s.data, s.fit, outlier=diff[j]>=new_thresh, reserve=s.reserve))
+                    j += 1
 
+        assert len(stars) == len(new_stars)
+        assert nremoved == len(inliers) - np.sum([not s.outlier for s in new_stars])
+        return new_stars, nremoved
