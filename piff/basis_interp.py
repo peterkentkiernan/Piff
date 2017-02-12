@@ -134,7 +134,7 @@ class BasisInterp(Interp):
             fit = StarFit(p)
         else:
             fit = star.fit.newParams(p)
-        return Star(star.data, fit)
+        return Star(star.data, fit, star.outlier, star.reserve)
 
 
 class BasisPolynomial(BasisInterp):
@@ -281,4 +281,3 @@ class BasisPolynomial(BasisInterp):
         """
         data = fits[extname + '_solution'].read()
         self.q = data['q'][0]
-

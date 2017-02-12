@@ -70,7 +70,7 @@ class Star(object):
         star.flux       The flux of the object
         star.center     The nominal center of the object (not necessarily the centroid)
     """
-    def __init__(self, data, fit):
+    def __init__(self, data, fit, outlier=False, reserve=False):
         """Constructor for Star instance.
 
         :param data: A StarData instance (invariant)
@@ -80,6 +80,8 @@ class Star(object):
         if fit is None:
             fit = StarFit(None, flux=1.0, center=(0.,0.))
         self.fit = fit
+        self.outlier = outlier
+        self.reserve = reserve
 
     def withFlux(self, flux=None, center=None):
         """Update the flux and/or center values
@@ -155,6 +157,10 @@ class Star(object):
     @property
     def center(self):
         return self.fit.center
+
+    @property
+    def dosolve(self):
+        return not self.outlier and not self.reserve
 
     @classmethod
     def makeTarget(cls, x=None, y=None, u=None, v=None, properties={}, wcs=None, scale=None,
@@ -520,7 +526,8 @@ class Star(object):
         """
         # The functionality is implemented as a StarData method.
         # So just pass this task on to that and recast the return value as a Star instance.
-        return Star(self.data.addPoisson(signal=signal, gain=gain), self.fit)
+        return Star(self.data.addPoisson(signal=signal, gain=gain), self.fit,
+                    self.outlier, self.reserve)
 
 
 class StarData(object):

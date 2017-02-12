@@ -165,7 +165,7 @@ class GPInterp(Interp):
                 fit = StarFit(y)
             else:
                 fit = star.fit.newParams(y0)
-            fitted_stars.append(Star(star.data, fit))
+            fitted_stars.append(Star(star.data, fit, star.outlier, star.reserve))
         return fitted_stars
 
     def _finish_write(self, fits, extname):

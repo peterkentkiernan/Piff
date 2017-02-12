@@ -302,7 +302,7 @@ class PixelGrid(Model):
             coeffs = np.where(index1d < 0, 0., coeffs)
             use = np.sum(coeffs,axis=1) > required_kernel_fraction
             data = star.data.maskPixels(use)
-        star = Star(data, fit)
+        star = Star(data, fit, star.outlier, star.reserve)
         # Update the flux to something close to right.
         star = self.reflux(star, fit_center=False, logger=logger)
         return star
@@ -359,7 +359,7 @@ class PixelGrid(Model):
                            chisq = star1.fit.chisq \
                                    + np.dot(dparam, np.dot(star1.fit.alpha, dparam)) \
                                    - 2 * np.dot(star1.fit.beta, dparam))
-        return Star(star1.data, starfit2)
+        return Star(star1.data, starfit2, star.outlier, star.reserve)
 
     def chisq(self, star, logger=None):
         """Calculate dependence of chi^2 = -2 log L(D|p) on PSF parameters for single star.
@@ -512,7 +512,7 @@ class PixelGrid(Model):
                          alpha = outalpha,
                          beta = outbeta)
 
-        return Star(star.data, outfit)
+        return Star(star.data, outfit, star.outlier, star.reserve)
 
     def draw(self, star):
         """Create new Star instance that has StarData filled with a rendering
@@ -544,7 +544,8 @@ class PixelGrid(Model):
             # Change data from surface brightness into flux
             model *= star.data.pixel_area
 
-        return Star(star.data.setData(model,include_zero_weight=True), star.fit)
+        return Star(star.data.setData(model,include_zero_weight=True), star.fit,
+                    star.outlier, star.reserve)
 
     def reflux(self, star, fit_center=True, logger=None):
         """Fit the Model to the star's data, varying only the flux (and
@@ -680,7 +681,8 @@ class PixelGrid(Model):
                                                worst_chisq = worst_chisq,
                                                dof = dof,
                                                alpha = star.fit.alpha,
-                                               beta = star.fit.beta))
+                                               beta = star.fit.beta),
+                            star.outlier, star.reserve)
             # If chisq went up, turn off centering.  There are a number of failure modes
             # to this algorithm that can lead to oscillatory behavior, so if we start doing
             # that, just turn off the centering for subsequent iterations.

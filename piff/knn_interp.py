@@ -147,7 +147,7 @@ class kNNInterp(Interp):
                     if logger:
                         logger.info('Warning, stars interpolated to wrong number of params! %s', len(fit))
                     fit = StarFit(yi)
-            star_list_fitted.append(Star(star.data, fit))
+            star_list_fitted.append(Star(star.data, fit, star.outlier, star.reserve))
         return star_list_fitted
 
     def _finish_write(self, fits, extname):

@@ -175,7 +175,7 @@ class Optical(Model):
         dof = np.count_nonzero(weight.array) - 6
 
         fit = StarFit(star.fit.params, flux=star.fit.flux, center=star.fit.center, chisq=chisq, dof=dof)
-        return Star(star.data, fit)
+        return Star(star.data, fit, star.outlier, star.reserve)
 
     def getProfile(self, params):
         """Get a version of the model as a GalSim GSObject
@@ -228,4 +228,4 @@ class Optical(Model):
         offset = star.data.image_pos + center - star.data.image.trueCenter()
         image = prof.drawImage(star.data.image.copy(), method='no_pixel', offset=offset)
         data = StarData(image, star.data.image_pos, star.data.weight)
-        return Star(data, star.fit)
+        return Star(data, star.fit, star.outlier, star.reserve)

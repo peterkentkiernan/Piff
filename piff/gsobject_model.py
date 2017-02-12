@@ -117,7 +117,7 @@ class GSObjectModel(Model):
         image = star.image.copy()
         prof.drawImage(image, method=self._method, offset=(star.image_pos-image.trueCenter()))
         data = StarData(image, star.image_pos, star.weight, star.data.pointing)
-        return Star(data, star.fit)
+        return Star(data, star.fit, star.outlier, star.reserve)
 
     def _lmfit_resid(self, lmparams, star):
         """Residual function to use with lmfit.  Essentially `chi` from `chisq`, but not summed
@@ -225,7 +225,7 @@ class GSObjectModel(Model):
                 raise RuntimeError("Error initializing star fit values using hsm.")
             sd = star.data.copy()
             sd.properties['hsm'] = flux, cenu, cenv, size, g1, g2
-            return Star(sd, star.fit)
+            return Star(sd, star.fit, star.outlier, star.reserve)
         return star
 
     def fit(self, star, fastfit=None, logger=None):
@@ -270,7 +270,7 @@ class GSObjectModel(Model):
         chisq = np.sum(star.weight.array * (star.image.array - model_image.array)**2)
         dof = np.count_nonzero(star.weight.array) - self._nparams
         fit = StarFit(params, flux=flux, center=center, chisq=chisq, dof=dof)
-        return Star(star.data, fit)
+        return Star(star.data, fit, star.outlier, star.reserve)
 
     def initialize(self, star, mask=True, logger=None):
         """Initialize the given star's fit parameters.
@@ -287,7 +287,7 @@ class GSObjectModel(Model):
             else:
                 params = np.array([ 0.0, 0.0, 1.0, 0.0, 0.0])
             fit = StarFit(params, flux=1.0, center=(0.0, 0.0))
-            star = Star(star.data, fit)
+            star = Star(star.data, fit, star.outlier, star.reserve)
             star = self.fit(star, fastfit=True)
         star = self.reflux(star, fit_center=False)
         return star
@@ -326,7 +326,8 @@ class GSObjectModel(Model):
                                            chisq = results.chisqr,
                                            dof = np.count_nonzero(star.data.weight.array) - 3,
                                            alpha = star.fit.alpha,
-                                           beta = star.fit.beta))
+                                           beta = star.fit.beta),
+                        star.outlier, star.reserve)
         else:
             image, weight, image_pos = star.data.getImage()
             model_image = self.draw(star).image
@@ -339,7 +340,8 @@ class GSObjectModel(Model):
                                            chisq = new_chisq,
                                            dof = np.count_nonzero(weight.array) - 1,
                                            alpha = star.fit.alpha,
-                                           beta = star.fit.beta))
+                                           beta = star.fit.beta),
+                        star.outlier, star.reserve)
 
 
 class Gaussian(GSObjectModel):

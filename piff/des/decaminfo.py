@@ -289,7 +289,8 @@ class DECamInfo(object):
 
         :returns star:  New star with updated properties
         """
-        return Star(self.pixel_to_focal_stardata(star.data), star.fit)
+        return Star(self.pixel_to_focal_stardata(star.data), star.fit,
+                    star.outlier, star.reserve)
 
     def pixel_to_focalList(self, stars):
         """Take stars and add focal plane position to properties
@@ -298,4 +299,6 @@ class DECamInfo(object):
 
         :returns starsl:  New stars with updated properties
         """
-        return [Star(self.pixel_to_focal_stardata(star.data), star.fit) for star in stars]
+        return [Star(self.pixel_to_focal_stardata(star.data), star.fit,
+                     star.outlier, star.reserve)
+                for star in stars]
