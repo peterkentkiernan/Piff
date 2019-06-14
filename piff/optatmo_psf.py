@@ -24,7 +24,6 @@ import numpy as np
 import numba
 import os
 from sklearn.ensemble import RandomForestRegressor
-import cPickle
 import pickle
 from scipy.interpolate import Rbf
 
@@ -47,7 +46,7 @@ class wavefrontmap(object):
     def __init__(self,file):
         # init contains all initializations which are done only once for all fits
 
-        
+
         self.file = file
         mapdict = pickle.load(open(self.file,'rb'))
         self.x = mapdict['x']
@@ -56,7 +55,7 @@ class wavefrontmap(object):
 
         self.interpDict = {}
         for iZ in range(3,37):    # numbering is such that iZ=3 is zern4
-            self.interpDict[iZ] = Rbf(self.x, self.y, self.zcoeff[:,iZ])        
+            self.interpDict[iZ] = Rbf(self.x, self.y, self.zcoeff[:,iZ])
 
     def get(self,x,y,nZernikeFirst=12,nZernikeLast=37):
         # fill an array with Zernike coefficients for this x,y in the Map
@@ -311,7 +310,7 @@ class OptAtmoPSF(PSF):
                 raise ValueError('Specified {0} shape weights, but need to specify {1}!'.format(len(shape_weights), len(self._shape_weights)))
             for i, si in enumerate(shape_weights):
                 self._shape_weights[i] = si
-            
+
 
         self.fit_optics_mode = fit_optics_mode
         self.random_forest_shapes_model_pickles_location = random_forest_shapes_model_pickles_location
@@ -390,8 +389,8 @@ class OptAtmoPSF(PSF):
             # kolmogorov_kwargs = {'half_light_radius': 1.0}
             kolmogorov_kwargs = {'fwhm': 1.0}
         kwargs['kolmogorov_kwargs'] = kolmogorov_kwargs
-       
-       #custom shape weights for the moments used in fitting     
+
+       #custom shape weights for the moments used in fitting
         if 'optatmo_psf_kwargs' in config_psf:
             kwargs['optatmo_psf_kwargs'] = config_psf['optatmo_psf_kwargs']
 
@@ -684,7 +683,7 @@ class OptAtmoPSF(PSF):
             self.fit_optics(self.fit_optics_stars, self.fit_optics_star_shapes, self.fit_optics_star_errors, mode='analytic', logger=logger, **kwargs)
 
         # first just fit the optical size parameter to correct size offset
-        # the size parameter is proportional to 1/r0, where r0 is the Fried parameter         
+        # the size parameter is proportional to 1/r0, where r0 is the Fried parameter
         # the "optics" size is the average of this across the focal plane, whereas
         # the "atmospheric" size is the deviation from this average at different points in the focal plane.
         # only use 500 stars and only use the e0 moment to fit
@@ -692,7 +691,7 @@ class OptAtmoPSF(PSF):
         n_fit_size = 500
         self.fit_size_indices = np.arange(len(self.fit_optics_stars))
         if n_fit_size < len(self.fit_optics_stars):
-        
+
             logger.debug('Cutting from {0} to {1} stars for fit_size'.format(len(self.fit_optics_stars), n_fit_size))
             np.random.shuffle(self.fit_size_indices)
             self.fit_size_indices = self.fit_size_indices[:n_fit_size]
@@ -752,7 +751,7 @@ class OptAtmoPSF(PSF):
             self.chisq_all_stars_optical[s] = np.sum(np.square(self.final_optical_chi[s*10:s*10+10]))
 
         # this is the "atmospheric" fit.
-        # we start here with the optical fit parameters and the average values of the atmospheric parameters found in the optical fit and hold those fixed. 
+        # we start here with the optical fit parameters and the average values of the atmospheric parameters found in the optical fit and hold those fixed.
         # we float only the deviation of these atmospheric parameters from the average here.
         # this fit can be skipped
         if self.atmo_interp in ['skip', 'Skip', None, 'none', 'None', 0]:
@@ -903,11 +902,11 @@ class OptAtmoPSF(PSF):
 
     def getProfile(self, params, logger=None):
         """Get galsim profile for a given params
-        :param params:      [atm_size, atm_g1, atm_g2, opt_size, opt_g1, opt_g2, z4, z5...]. 
+        :param params:      [atm_size, atm_g1, atm_g2, opt_size, opt_g1, opt_g2, z4, z5...].
                             where all params that are not "z_number" are atmospheric params. Those labelled
                             "opt_something" are the averages of these atmospheric params across the focal plane
                             and those labelled "atm_something" are the deviations from these averages for stars
-                            at different points in the focal plane. Note how this means that, for example, 
+                            at different points in the focal plane. Note how this means that, for example,
                             atm_size and opt_size are added together for the Kolmogorov model
         :returns:           Galsim profile
         """
@@ -1037,8 +1036,8 @@ class OptAtmoPSF(PSF):
         :param optatmo_psf_kwargs:      A dictionary containing the keys we are
                                         updating, like "zPupil004_zFocal001" or
                                         "size" (in this example "size" is
-                                        proportional to the average of 1/r0 
-                                        across the focal plane, r0 being the 
+                                        proportional to the average of 1/r0
+                                        across the focal plane, r0 being the
                                         Fried parameter)
         :param logger:                  A logger object for logging debug info
         """
@@ -1094,15 +1093,15 @@ class OptAtmoPSF(PSF):
                 old_value = self.aberrations_field[pupil_index - 1, focal_index - 1]
                 if key == 'g1':
                     print("self.aberrations_field[pupil_index - 1, focal_index - 1]: {0}".format(self.aberrations_field[pupil_index - 1, focal_index - 1]))
-                    print("old_value: {0}".format(old_value)) 
+                    print("old_value: {0}".format(old_value))
             else:
                 old_value = self.optatmo_psf_kwargs['L0']
                 print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))
-                print("old_value: {0}".format(old_value)) 
+                print("old_value: {0}".format(old_value))
             new_value = optatmo_psf_kwargs[key]
             if key == 'L0' or key == 'g1':
                 print("optatmo_psf_kwargs['{0}']: {1}".format(key,optatmo_psf_kwargs[key]))
-                print("new_value: {0}".format(new_value))                
+                print("new_value: {0}".format(new_value))
 
             # figure out if we really need to recompute the coef arrays
             if old_value != new_value:
@@ -1114,29 +1113,29 @@ class OptAtmoPSF(PSF):
                     if key == 'g1':
                         print("preparing to change g1")
                         print("self.aberrations_field[pupil_index - 1, focal_index - 1]: {0}".format(self.aberrations_field[pupil_index - 1, focal_index - 1]))
-                        print("old_value: {0}".format(old_value)) 
+                        print("old_value: {0}".format(old_value))
                         print("optatmo_psf_kwargs['g1']: {0}".format(optatmo_psf_kwargs[key]))
-                        print("new_value: {0}".format(new_value))   
+                        print("new_value: {0}".format(new_value))
                     self.aberrations_field[pupil_index - 1, focal_index - 1] = new_value
                     if key == 'g1':
                         print("finished changing g1")
                         print("self.aberrations_field[pupil_index - 1, focal_index - 1]: {0}".format(self.aberrations_field[pupil_index - 1, focal_index - 1]))
-                        print("old_value: {0}".format(old_value)) 
+                        print("old_value: {0}".format(old_value))
                         print("optatmo_psf_kwargs['g1']: {0}".format(optatmo_psf_kwargs[key]))
-                        print("new_value: {0}".format(new_value)) 
+                        print("new_value: {0}".format(new_value))
                     aberrations_changed = True
                 else:
                     print("preparing to change L0")
                     print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))
-                    print("old_value: {0}".format(old_value)) 
+                    print("old_value: {0}".format(old_value))
                     print("optatmo_psf_kwargs['L0']: {0}".format(optatmo_psf_kwargs[key]))
-                    print("new_value: {0}".format(new_value))                    
-                    self.optatmo_psf_kwargs['L0'] = new_value 
-                    print("finished changing L0")   
+                    print("new_value: {0}".format(new_value))
+                    self.optatmo_psf_kwargs['L0'] = new_value
+                    print("finished changing L0")
                     print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))
-                    print("old_value: {0}".format(old_value)) 
+                    print("old_value: {0}".format(old_value))
                     print("optatmo_psf_kwargs['L0']: {0}".format(optatmo_psf_kwargs[key]))
-                    print("new_value: {0}".format(new_value))                                      
+                    print("new_value: {0}".format(new_value))
 
         if aberrations_changed:
             logger.debug('---------- Recomputing field zernike coefficients')
@@ -1309,10 +1308,10 @@ class OptAtmoPSF(PSF):
         return measure_snr(star)
 
     def fit_optics(self, stars, shapes, errors, mode, logger=None, ftol=1.e-7, **kwargs):
-        """Fit interpolated PSF model to star shapes. It is important to note that although this fit is referred to as 
-        the "optical" fit we still fit the average of the atmospheric parameters across the focal plane here. Finding 
-        the deviation of these atmospheric parameters from the average is then done later in the fit_atmosphere() 
-        function. For example, there is an atmospheric parameter known as the "size" parameter (which is proportional 
+        """Fit interpolated PSF model to star shapes. It is important to note that although this fit is referred to as
+        the "optical" fit we still fit the average of the atmospheric parameters across the focal plane here. Finding
+        the deviation of these atmospheric parameters from the average is then done later in the fit_atmosphere()
+        function. For example, there is an atmospheric parameter known as the "size" parameter (which is proportional
         to 1/r0 with r0 being the Fried parameter) whose average we fit in this function. Finding the deviation of this
         size parameter from the average is then done later in the fit_atmosphere() function.
         :param stars:       A list of Stars
@@ -1321,8 +1320,8 @@ class OptAtmoPSF(PSF):
         :param mode:        Parameter mode ['analytic', 'shape', 'pixel']. Dictates which residual function we use.
         :param logger:      A logger object for logging debug info.
                             [default: None]
-        :param ftol:        One of the convergence criteria for the optical fit. Based on relative change in the 
-                            chi after an iteration. Smaller ftol is stricter and takes longer to converge. Not 
+        :param ftol:        One of the convergence criteria for the optical fit. Based on relative change in the
+                            chi after an iteration. Smaller ftol is stricter and takes longer to converge. Not
                             used in "analytic" or "pixel" mode.
                             [default: 1.e-7]
         Notes
@@ -1347,8 +1346,8 @@ class OptAtmoPSF(PSF):
         if self.reference_wavefront: self._create_cache_higher_order(stars, logger=logger)
 
         print("self.optatmo_psf_kwargs before getting lmparams: {0}".format(self.optatmo_psf_kwargs))
-        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))        
-        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['g1']))    
+        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))
+        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['g1']))
         lmparams = self._fit_optics_lmparams(self.optatmo_psf_kwargs, self.keys)
         print("lmparams: {0}".format(lmparams))
         if mode == 'analytic':
@@ -1383,19 +1382,19 @@ class OptAtmoPSF(PSF):
         try:
             for m, moment in enumerate(np.array(["e0", "e1", "e2", "zeta1", "zeta2", "delta1", "delta2"])):
                 with open('{0}/random_forest_shapes_model_{1}.cpickle'.format(self.random_forest_shapes_model_pickles_location, moment), 'rb') as f:
-                    regr = cPickle.load(f)  
-                    regr_dictionary[moment] = regr          
+                    regr = pickle.load(f)
+                    regr_dictionary[moment] = regr
         except:
-            regr_dictionary = {"e0":None,"e1":None,"e2":None,"zeta1": None,"zeta2":None,"delta1":None,"delta2":None}    
-            
-        # do fit!     
+            regr_dictionary = {"e0":None,"e1":None,"e2":None,"zeta1": None,"zeta2":None,"delta1":None,"delta2":None}
+
+        # do fit!
         if mode == 'analytic':
             results = lmfit.minimize(residual, lmparams, args=(stars, shapes, errors, regr_dictionary, logger,), epsfcn=1e-5)
         elif mode == 'shape':
             results = lmfit.minimize(residual, lmparams, args=(stars, shapes, errors, logger,), epsfcn=1e-5, ftol=ftol)
             print("results.params.valuesdict(): {0}".format(results.params.valuesdict()))
-            print("results.params.valuesdict()['L0']: {0}".format(results.params.valuesdict()['L0']))  
-            print("results.params.valuesdict()['g1']: {0}".format(results.params.valuesdict()['L0']))            
+            print("results.params.valuesdict()['L0']: {0}".format(results.params.valuesdict()['L0']))
+            print("results.params.valuesdict()['g1']: {0}".format(results.params.valuesdict()['L0']))
         else:
             results = lmfit.minimize(residual, lmparams, args=(stars, shapes, errors, logger,), epsfcn=1e-5)
 
@@ -1438,8 +1437,8 @@ class OptAtmoPSF(PSF):
         # TODO: can I go through this for loop from lmparams directly without blindly hoping key_i lines up?
         key_i = 0
         print("self.optatmo_psf_kwargs before replacing with results: {0}".format(self.optatmo_psf_kwargs))
-        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))        
-        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['L0']))     
+        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))
+        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['L0']))
         for key in self.keys:
             if not self.optatmo_psf_kwargs['fix_' + key]:
                 val = results.params.valuesdict()[key]
@@ -1455,8 +1454,8 @@ class OptAtmoPSF(PSF):
                     self.optatmo_psf_kwargs['error_' + key] = placeholder_error
                 key_i += 1
         print("self.optatmo_psf_kwargs after replacing with results: {0}".format(self.optatmo_psf_kwargs))
-        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0'])) 
-        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['g1']))                                    
+        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))
+        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['g1']))
         self._update_optatmopsf(self.optatmo_psf_kwargs, logger=logger)
 
         logger.info('{0} optical fit from lmfit parameters:'.format(mode))
@@ -1471,8 +1470,8 @@ class OptAtmoPSF(PSF):
 
     def fit_size(self, stars, shapes, shape_errors, logger=None, **kwargs):
         """Adjusts the optics size parameter found in the analytic fit by doing forced search of 501 steps +-
-        0.1 about the result found in the analytic fit. The size parameter is proportional to 1/r0, r0 
-        being the Fried parameter. The "optics" size is the average of this across the focal plane, whereas 
+        0.1 about the result found in the analytic fit. The size parameter is proportional to 1/r0, r0
+        being the Fried parameter. The "optics" size is the average of this across the focal plane, whereas
         "atmospheric" size is the deviation from this average at different points in the focal plane.
         :param stars:           A list of Star instances.
         :param shapes:          A list of premeasured Star shapes
@@ -1530,7 +1529,7 @@ class OptAtmoPSF(PSF):
                        chisq_threshold=0.1, max_iterations=30, logger=None):
         """Fit interpolated PSF model to star data using standard sequence of
         operations (will also reject with outliers). We start here with the
-        optical fit parameters and the average values of the atmospheric 
+        optical fit parameters and the average values of the atmospheric
         parameters found in the optical fit and hold those fixed. We float only
         the deviation of these atmospheric parameters from the average here.
         :param stars:           A list of Star instances.
@@ -1699,7 +1698,7 @@ class OptAtmoPSF(PSF):
             opt_L0 = params[3]
         opt_size = params[self.n_params_constant_atmosphere + 0]
         opt_g1 = params[self.n_params_constant_atmosphere + 1]
-        opt_g2 = params[self.n_params_constant_atmosphere + 2]      
+        opt_g2 = params[self.n_params_constant_atmosphere + 2]
         lmparams.add('atmo_size', value=fit_size, vary=vary_shape, min=min_size - opt_size, max=max_size - opt_size)
         lmparams.add('atmo_g1', value=fit_g1, vary=vary_shape, min=-max_g - opt_g1, max=max_g - opt_g1)
         lmparams.add('atmo_g2', value=fit_g2, vary=vary_shape, min=-max_g - opt_g2, max=max_g - opt_g2)
@@ -1858,8 +1857,8 @@ class OptAtmoPSF(PSF):
                                     fix_size [do not allow parameter to vary],
                                     min_,max_size [min and maximum values
                                     allowed for size during fit] (in this example
-                                    "size" is proportional to the average of 1/r0 
-                                    across the focal plane, r0 being the Fried 
+                                    "size" is proportional to the average of 1/r0
+                                    across the focal plane, r0 being the Fried
                                     these are specified, will fill with guessed
                                     values.
         :param keys:                List of keys we want to add to the lmfit
@@ -1891,7 +1890,7 @@ class OptAtmoPSF(PSF):
         return lmparams
 
     def _fit_analytic_residual(self, lmparams, stars, shapes, shape_errors, regr_dictionary, logger=None):
-        """Residual function for fitting optics via random forest model. 
+        """Residual function for fitting optics via random forest model.
         This is what is done in "analytic" mode.
         :param lmparams:        LMFit Parameters object
         :param stars:           A list of Stars
@@ -1914,8 +1913,8 @@ class OptAtmoPSF(PSF):
         # generate the stars' moments using random forest model and the fit parameters of the stars
         #note: only up to third moments used for the analytic fit
         shapes_model_list = []
-        for m, moment in enumerate(np.array(["e0", "e1", "e2", "zeta1", "zeta2", "delta1", "delta2"])):    
-            regr = regr_dictionary[moment]    
+        for m, moment in enumerate(np.array(["e0", "e1", "e2", "zeta1", "zeta2", "delta1", "delta2"])):
+            regr = regr_dictionary[moment]
             shapes_model_list.append(regr.predict(param_values_all_stars))
         shapes_model = np.column_stack(tuple(shapes_model_list))
         shape_weights = self._shape_weights[:7]
@@ -1932,11 +1931,11 @@ class OptAtmoPSF(PSF):
 
     def _fit_size_residual(self, lmparams, stars, shapes, shape_errors, logger=None):
         """Residual function for fitting the optics size parameter to the
-        observed e0 moment. The size parameter is proportional to 1/r0, r0 
+        observed e0 moment. The size parameter is proportional to 1/r0, r0
         being the Fried parameter. The "optics" size is the average of this
         across the focal plane, whereas "atmospheric" size is the deviation
-        from this average at different points in the focal plane. This 
-        function calls _fit_optics_residual and then limits the chi to only 
+        from this average at different points in the focal plane. This
+        function calls _fit_optics_residual and then limits the chi to only
         use the e0 moment.
         :param lmparams:        LMFit Parameters object
         :param stars:           A list of Stars
@@ -1954,7 +1953,7 @@ class OptAtmoPSF(PSF):
         # fit_size() is used before the full optical fit and makes that fit faster
         chi = self._fit_optics_residual(lmparams, stars, shapes, shape_errors, logger, only_size=True)
         #print("chi: {0}".format(chi))
-        chi = chi[0] / self._shape_weights[0]	
+        chi = chi[0] / self._shape_weights[0]
         #print("chi: {0}".format(chi))
         # chi is a one-dimensional numpy array, containing e0_weight*((e0_model-e0)/e0_error) for all stars
         return chi
@@ -1970,7 +1969,7 @@ class OptAtmoPSF(PSF):
                                   [default: None]
         :param only_size:         Boolean. If False, record the reduced
                                   chisq at each iteration
-                                  [default: False]                                  
+                                  [default: False]
         :returns chi:             Chi of observed shapes to model shapes
         Notes
         -----
@@ -1979,25 +1978,25 @@ class OptAtmoPSF(PSF):
         logger = LoggerWrapper(logger)
         # update psf
         print("self.optatmo_psf_kwargs before using _update_optatmopsf(): {0}".format(self.optatmo_psf_kwargs))
-        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))    
-        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['g1']))           
+        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))
+        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['g1']))
         print("lmparams.valuesdict(): {0}".format(lmparams.valuesdict()))
         try:
-            print("lmparams.valuesdict()['L0']: {0}".format(lmparams.valuesdict()['L0']))  
-            print("lmparams.valuesdict()['g1']: {0}".format(lmparams.valuesdict()['g1']))    
+            print("lmparams.valuesdict()['L0']: {0}".format(lmparams.valuesdict()['L0']))
+            print("lmparams.valuesdict()['g1']: {0}".format(lmparams.valuesdict()['g1']))
         except:
-            print("no L0 or g1 currently in lmparams.valuesdict()")     
+            print("no L0 or g1 currently in lmparams.valuesdict()")
         self._update_optatmopsf(lmparams.valuesdict(), logger)
 
         # get optical params
         print("self.optatmo_psf_kwargs before getting params for _fit_optics_residual() but after using _update_optatmopsf(): {0}".format(self.optatmo_psf_kwargs))
-        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))        
-        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['g1'])) 
+        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))
+        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['g1']))
         opt_params = self.getParamsList(stars)
         print("params for first star: {0}".format(opt_params[0]))
         print("self.optatmo_psf_kwargs after getting params for _fit_optics_residual(): {0}".format(self.optatmo_psf_kwargs))
-        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))   
-        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['g1']))         
+        print("self.optatmo_psf_kwargs['L0']: {0}".format(self.optatmo_psf_kwargs['L0']))
+        print("self.optatmo_psf_kwargs['g1']: {0}".format(self.optatmo_psf_kwargs['g1']))
 
         # measure their shapes and calculate chi
         chi = np.array([])
@@ -2051,7 +2050,7 @@ class OptAtmoPSF(PSF):
         return chi
 
     def _fit_optics_pixel_residual(self, lmparams, stars, shapes, errors, logger=None): #not necessarily set up to work with vonkarman atmosphere
-        """Residual function for fitting all stars. The only difference between this 
+        """Residual function for fitting all stars. The only difference between this
         function and _fit_optics_residual is that pixels instead of shapes are used here.
         :param lmparams:    LMFit Parameters object
         :param stars:       A list of Stars
@@ -2181,7 +2180,7 @@ class OptAtmoPSF(PSF):
             logger.debug('Cache called, but no reference wavefront. Skipping')
             self._cache = False
             self._aberrations_reference_wavefront = None
-            
+
     def _create_cache_higher_order(self, stars, logger=None):
         """Save aberrations from the higher order reference wavefront. The purpose
         of this is the same as with the _create_cache() function except that
@@ -2199,7 +2198,7 @@ class OptAtmoPSF(PSF):
                 x_value = star_data.local_wcs._x(star_data['u'], star_data['v'])
                 y_value = star_data.local_wcs._y(star_data['u'], star_data['v'])
                 x_value = x_value * (15.0/1000.0)
-                y_value = y_value * (15.0/1000.0)  
+                y_value = y_value * (15.0/1000.0)
                 zout_camera = self.higher_order_reference_wavefront.get(x=x_value, y=y_value)
                 zout_sky = np.array([-zout_camera[0], zout_camera[1], zout_camera[2], -zout_camera[3], zout_camera[5], zout_camera[4], -zout_camera[7], -zout_camera[6], zout_camera[9], zout_camera[8], zout_camera[10], zout_camera[11], -zout_camera[12], -zout_camera[13], zout_camera[14], zout_camera[15], -zout_camera[16], zout_camera[18], zout_camera[17], -zout_camera[20], -zout_camera[19], zout_camera[22], zout_camera[21], -zout_camera[24], -zout_camera[23], zout_camera[25]]) #conversion from zout_camera (AOS system) to zout_sky (Galsim) inspired by thesis of Chris Davis
                 aberrations_higher_order_reference_wavefront[s] = zout_sky
@@ -2219,7 +2218,7 @@ class OptAtmoPSF(PSF):
             logger.debug('Delete cache called, but no reference wavefront. Skipping')
         self._cache = False
         self._aberrations_reference_wavefront = None
-        
+
     def _delete_cache_higher_order(self, logger=None):
         """Delete higher order reference wavefront cache.
         :param logger:  A logger object for logging debug info [default: None]

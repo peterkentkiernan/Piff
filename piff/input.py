@@ -164,55 +164,55 @@ class Input(object):
                        "s" if len(self.images) > 1 else "")
 
         # here we remove nuisance stars. We do this by seeing if there is an unusual amount of flux far from the center of the postage stamp
-	flux_extras = []
-	for star in stars:
-	    flux_extra = 0
-	    for i in range(0,self.stamp_size):
-		for j in range(0,self.stamp_size):
-		    if np.sqrt(np.square((self.stamp_size-1.0)/2.0-i)+np.square((self.stamp_size-1.0)/2.0-j))>(self.stamp_size-1.0)/3.0:
-		        flux_extra = flux_extra + star.image.array[i][j]
-	    flux_extras.append(flux_extra)
+        flux_extras = []
+        for star in stars:
+            flux_extra = 0
+            for i in range(0,self.stamp_size):
+                for j in range(0,self.stamp_size):
+                    if np.sqrt(np.square((self.stamp_size-1.0)/2.0-i)+np.square((self.stamp_size-1.0)/2.0-j))>(self.stamp_size-1.0)/3.0:
+                        flux_extra = flux_extra + star.image.array[i][j]
+            flux_extras.append(flux_extra)
 
-	hist = np.histogram(flux_extras, bins = 1000)
-	y = hist[0]
-	increment = (hist[1][1000]-hist[1][0])/1000.0
-	half_increment = increment/2.0
-	x_uncut = hist[1] + half_increment
-	x = np.delete(x_uncut,1000)
-	gaussian_amplitude = np.amax(y)
-	guess_sigma = 0.0
-	for i in range(0,len(y)):
-	    if y[i]>0.5*gaussian_amplitude:
-		guess_sigma = np.abs(x[i])
-		break
+        hist = np.histogram(flux_extras, bins = 1000)
+        y = hist[0]
+        increment = (hist[1][1000]-hist[1][0])/1000.0
+        half_increment = increment/2.0
+        x_uncut = hist[1] + half_increment
+        x = np.delete(x_uncut,1000)
+        gaussian_amplitude = np.amax(y)
+        guess_sigma = 0.0
+        for i in range(0,len(y)):
+            if y[i]>0.5*gaussian_amplitude:
+                guess_sigma = np.abs(x[i])
+                break
 
-	def gaussian_func(x,b):
-	    return gaussian_amplitude/np.exp(np.square(x)/(2*np.square(b)))
-	popt,pcov = curve_fit(gaussian_func,x,y,guess_sigma)
-	sigma = popt[0]
-	delete_list = []
-	for star_i, star in enumerate(stars):
-	    if flux_extras[star_i] > 2*sigma:
-		delete_list.append(star_i)
-	stars = np.delete(stars, delete_list)
-	stars = stars.tolist()
+        def gaussian_func(x,b):
+            return gaussian_amplitude/np.exp(np.square(x)/(2*np.square(b)))
+        popt,pcov = curve_fit(gaussian_func,x,y,guess_sigma)
+        sigma = popt[0]
+        delete_list = []
+        for star_i, star in enumerate(stars):
+            if flux_extras[star_i] > 2*sigma:
+                delete_list.append(star_i)
+        stars = np.delete(stars, delete_list)
+        stars = stars.tolist()
 
-	logger.info("There are {0} stars after the nuisance star cut".format(len(stars)))
+        logger.info("There are {0} stars after the nuisance star cut".format(len(stars)))
 
         # here we remove stars that have been at least partially covered by a mask and thus have weight exactly 0 in at least one pixel of their postage stamp
-	star_weightmaps = []
-	for star in stars:
-		#print("star_weightmap: {0}".format(star.weight.array))
-		star_weightmaps.append(star.weight.array)
-	star_weightmaps = np.array(star_weightmaps)
-	#print("star_weightmaps: {0}".format(star_weightmaps))
-	conds_not_masked = (np.all(star_weightmaps != 0.0,axis=(1,2)))
-	for s, star_weightmap in enumerate(star_weightmaps):
-		if not np.all(star_weightmap != 0.0):
-			print("star_weightmap for star {0}: {1}".format(s, star_weightmap))
-	stars = np.array(stars)[conds_not_masked].tolist()
-	logger.info("There are {0} stars after the masked star cut".format(len(stars)))
-	return stars
+        star_weightmaps = []
+        for star in stars:
+            #print("star_weightmap: {0}".format(star.weight.array))
+            star_weightmaps.append(star.weight.array)
+        star_weightmaps = np.array(star_weightmaps)
+        #print("star_weightmaps: {0}".format(star_weightmaps))
+        conds_not_masked = (np.all(star_weightmaps != 0.0,axis=(1,2)))
+        for s, star_weightmap in enumerate(star_weightmaps):
+            if not np.all(star_weightmap != 0.0):
+                print("star_weightmap for star {0}: {1}".format(s, star_weightmap))
+        stars = np.array(stars)[conds_not_masked].tolist()
+        logger.info("There are {0} stars after the masked star cut".format(len(stars)))
+        return stars
 
     @staticmethod
     def calculateSNR(image, weight):
@@ -773,8 +773,8 @@ class InputFiles(Input):
 
         # Read in the star catalog
         logger.warning("Reading star catalog %s.",cat_file_name)
-	print("cat_file_name: {0}".format(cat_file_name))
-	print("cat_hdu: {0}".format(cat_hdu))
+        print("cat_file_name: {0}".format(cat_file_name))
+        print("cat_hdu: {0}".format(cat_hdu))
         cat = fitsio.read(cat_file_name, cat_hdu)
 
         if flag_col is not None:

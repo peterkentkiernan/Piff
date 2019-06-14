@@ -272,11 +272,11 @@ def meanify(config, logger=None):
     if psf_list is not None:
         logger.debug('psf_list = %s',psf_list)
         print('psf_list = %s',psf_list)
-	time.sleep(10)
+        time.sleep(10)
         npsfs = len(psf_list)
         logger.debug('npsfs = %d',npsfs)
         print('npsfs = %d',npsfs)
-	time.sleep(10)
+        time.sleep(10)
         config['output']['file_name'] = psf_list
 
     file_name_in = config['output']['file_name']
@@ -360,7 +360,7 @@ def meanify(config, logger=None):
             Filter &= np.isfinite(average).reshape(-1)
             params0[:,i] = average
 
-    # get center of each bin 
+    # get center of each bin
     u0 = u0[:-1] + (u0[1] - u0[0])/2.
     v0 = v0[:-1] + (v0[1] - v0[0])/2.
     u0, v0 = np.meshgrid(u0, v0)
@@ -368,7 +368,7 @@ def meanify(config, logger=None):
     coords0 = np.array([u0.reshape(-1), v0.reshape(-1)]).T
 
     # remove any entries with nan (counts == 0 and non finite value in
-    # the 2D statistic computation) 
+    # the 2D statistic computation)
     coords0 = coords0[Filter]
     params0 = params0[Filter]
 
