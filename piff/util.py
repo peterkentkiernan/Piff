@@ -268,7 +268,7 @@ def hsm_error(star, logger=None, return_debug=False, return_error=True):
         offset=(star.image_pos-star.image.true_center)
     )
     # convert image into kernel
-    kernel_i = image.array.flatten()
+    kernel_i = image.array.ravel()
 
     # now apply mask
     mask = weight_i != 0.
@@ -426,7 +426,7 @@ def hsm_third_moments(star, logger=None):
         offset=(star.image_pos-star.image.true_center)
     )
     # convert image into kernel
-    kernel_i = image.array.flatten()
+    kernel_i = image.array.ravel()
 
     # now apply mask
     mask = weight_i != 0.
@@ -496,7 +496,7 @@ def hsm_error_third_moments(star, logger=None):
         offset=(star.image_pos-star.image.true_center)
     )
     # convert image into kernel
-    kernel_i = image.array.flatten()
+    kernel_i = image.array.ravel()
 
     # now apply mask
     mask = weight_i != 0.
@@ -679,7 +679,7 @@ def hsm_fourth_moments(star, logger=None):
         offset=(star.image_pos-star.image.true_center)
     )
     # convert image into kernel
-    kernel_i = image.array.flatten()
+    kernel_i = image.array.ravel()
 
     # now apply mask
     mask = weight_i != 0.
@@ -763,7 +763,7 @@ def hsm_error_fourth_moments(star, logger=None):
         offset=(star.image_pos-star.image.true_center)
     )
     # convert image into kernel
-    kernel_i = image.array.flatten()
+    kernel_i = image.array.ravel()
 
     # now apply mask
     mask = weight_i != 0.
@@ -1004,7 +1004,7 @@ def hsm_orthogonal(star, logger=None):
         offset=(star.image_pos-star.image.true_center)
     )
     # convert image into kernel
-    kernel_i = image.array.flatten()
+    kernel_i = image.array.ravel()
 
     # now apply mask
     mask = weight_i != 0.
@@ -1101,7 +1101,7 @@ def hsm_error_orthogonal(star, logger=None):
         offset=(star.image_pos-star.image.true_center)
     )
     # convert image into kernel
-    kernel_i = image.array.flatten()
+    kernel_i = image.array.ravel()
 
     # now apply mask
     mask = weight_i != 0.
