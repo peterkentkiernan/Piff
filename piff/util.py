@@ -733,7 +733,7 @@ def hsm_fourth_moments(star, logger=None):
     eta1_calc = Muuuu - Mvvvv
     eta2_calc = 2 * Muuuv + 2 * Muvvv
     lambda1_calc = Muuuu - 6 * Muuvv + Mvvvv
-    lambda2_calc = 4 * Muuuv - 4 * Muvvv 
+    lambda2_calc = 4 * Muuuv - 4 * Muvvv
 
     return flux_calc, u0_calc, v0_calc, e0_calc, e1_calc, e2_calc, zeta1_calc, zeta2_calc, delta1_calc, delta2_calc, xi_calc, eta1_calc, eta2_calc, lambda1_calc, lambda2_calc
 
@@ -816,7 +816,7 @@ def hsm_error_fourth_moments(star, logger=None):
     eta1_calc = Muuuu - Mvvvv
     eta2_calc = 2 * Muuuv + 2 * Muvvv
     lambda1_calc = Muuuu - 6 * Muuvv + Mvvvv
-    lambda2_calc = 4 * Muuuv - 4 * Muvvv 
+    lambda2_calc = 4 * Muuuv - 4 * Muvvv
 
     #return flux_calc, u0_calc, v0_calc, e0_calc, e1_calc, e2_calc, zeta1_calc, zeta2_calc, delta1_calc, delta2_calc, xi_calc, eta1_calc, eta2_calc, lambda1_calc, lambda2_calc
 
@@ -866,7 +866,7 @@ def hsm_error_fourth_moments(star, logger=None):
     sigma2_zeta2_data = np.sum(np.power(2 * weight_i * kernel_i * (dv_i * dv_i * dv_i + du_i * du_i * dv_i) / normalization, 2) * sigma2_data_i)
     sigma2_delta1_data = np.sum(np.power(2 * weight_i * kernel_i * (du_i * du_i * du_i - 3 * du_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
     sigma2_delta2_data = np.sum(np.power(2 * weight_i * kernel_i * -(dv_i * dv_i * dv_i - 3 * du_i * du_i * dv_i) / normalization, 2) * sigma2_data_i)
-    
+
     sigma2_xi_data = np.sum(np.power(2 * weight_i * kernel_i * (du_i * du_i * du_i * du_i + 2 * du_i * du_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
     sigma2_eta1_data = np.sum(np.power(2 * weight_i * kernel_i * (du_i * du_i * du_i * du_i - dv_i * dv_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
     sigma2_eta2_data = np.sum(np.power(2 * weight_i * kernel_i * (2 * du_i * du_i * du_i * dv_i + 2 * du_i * dv_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
@@ -889,7 +889,7 @@ def hsm_error_fourth_moments(star, logger=None):
     sigma2_delta1_v0 = np.sum(np.power(2 * -(6 * du_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_v0, 2))
     sigma2_delta2_u0 = np.sum(np.power(2 * 6 * du_i * dv_i * weight_i * kernel_i * data_i / normalization * sigma_u0, 2))
     sigma2_delta2_v0 = np.sum(np.power(2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_v0, 2))
-    
+
     sigma2_xi_u0 = np.sum(np.power(2 * (4 * du_i * du_i * du_i + 4 * du_i * dv_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_u0, 2))
     sigma2_xi_v0 = np.sum(np.power(2 * (4 * du_i * du_i * dv_i + 4 * dv_i * dv_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_v0, 2))
     sigma2_eta1_u0 = np.sum(np.power(2 * 4 * du_i * du_i * du_i * weight_i * kernel_i * data_i / normalization * sigma_u0, 2))
@@ -899,7 +899,7 @@ def hsm_error_fourth_moments(star, logger=None):
     sigma2_lambda1_u0 = np.sum(np.power(2 * (4 * du_i * du_i * du_i - 12 * du_i * dv_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_u0, 2))
     sigma2_lambda1_v0 = np.sum(np.power(2 * (4 * dv_i * dv_i * dv_i - 12 * du_i * du_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_v0, 2))
     sigma2_lambda2_u0 = np.sum(np.power(2 * (12 * du_i * du_i * dv_i - 4 * dv_i * dv_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_u0, 2))
-    sigma2_lambda2_v0 = np.sum(np.power(2 * (4 * du_i * du_i * du_i - 12 * du_i * dv_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_v0, 2))    
+    sigma2_lambda2_v0 = np.sum(np.power(2 * (4 * du_i * du_i * du_i - 12 * du_i * dv_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_v0, 2))
 
     # add sigma_normalization
     sigma2_e0_flux = np.power(e0_calc * sigma_normalization / normalization, 2)
@@ -910,7 +910,7 @@ def hsm_error_fourth_moments(star, logger=None):
     sigma2_zeta2_flux = np.power(zeta2_calc * sigma_normalization / normalization, 2)
     sigma2_delta1_flux = np.power(delta1_calc * sigma_normalization / normalization, 2)
     sigma2_delta2_flux = np.power(delta2_calc * sigma_normalization / normalization, 2)
-    
+
     sigma2_xi_flux = np.power(xi_calc * sigma_normalization / normalization, 2)
     sigma2_eta1_flux = np.power(eta1_calc * sigma_normalization / normalization, 2)
     sigma2_eta2_flux = np.power(eta2_calc * sigma_normalization / normalization, 2)
@@ -926,7 +926,7 @@ def hsm_error_fourth_moments(star, logger=None):
     sigma_zeta2 = np.sqrt(sigma2_zeta2_data + sigma2_zeta2_u0 + sigma2_zeta2_v0 + sigma2_zeta2_flux)
     sigma_delta1 = np.sqrt(sigma2_delta1_data + sigma2_delta1_u0 + sigma2_delta1_v0 + sigma2_delta1_flux)
     sigma_delta2 = np.sqrt(sigma2_delta2_data + sigma2_delta2_u0 + sigma2_delta2_v0 + sigma2_delta2_flux)
-    
+
     sigma_xi = np.sqrt(sigma2_xi_data + sigma2_xi_u0 + sigma2_xi_v0 + sigma2_xi_flux)
     sigma_eta1 = np.sqrt(sigma2_eta1_data + sigma2_eta1_u0 + sigma2_eta1_v0 + sigma2_eta1_flux)
     sigma_eta2 = np.sqrt(sigma2_eta2_data + sigma2_eta2_u0 + sigma2_eta2_v0 + sigma2_eta2_flux)
@@ -1219,7 +1219,7 @@ def hsm_error_orthogonal(star, logger=None):
     sigma2_zeta2_data = np.sum(np.power(2 * weight_i * kernel_i * (dv_i * dv_i * dv_i + du_i * du_i * dv_i) / normalization, 2) * sigma2_data_i)
     sigma2_delta1_data = np.sum(np.power(2 * weight_i * kernel_i * (du_i * du_i * du_i - 3 * du_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
     sigma2_delta2_data = np.sum(np.power(2 * weight_i * kernel_i * -(dv_i * dv_i * dv_i - 3 * du_i * du_i * dv_i) / normalization, 2) * sigma2_data_i)
-    
+
     sigma2_orth4_data = np.sum(np.power(2 * weight_i * kernel_i * (du_i * du_i * du_i * du_i + 2 * du_i * du_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i - 3 * du_i * du_i - 3 * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
     sigma2_orth6_data = np.sum(np.power(2 * weight_i * kernel_i * (du_i * du_i * du_i * du_i * du_i * du_i + 3 * du_i * du_i * du_i * du_i * dv_i * dv_i + 3 * du_i * du_i * dv_i * dv_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i * dv_i * dv_i - 8 * du_i * du_i * du_i * du_i -16 * du_i * du_i * dv_i * dv_i - 8 * dv_i * dv_i * dv_i * dv_i + 12 * du_i * du_i + 12 * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
     sigma2_orth8_data = np.sum(np.power(2 * weight_i * kernel_i * (du_i * du_i * du_i * du_i * du_i * du_i * du_i * du_i + 4 * du_i * du_i * du_i * du_i * du_i * du_i * dv_i * dv_i + 6 * du_i * du_i * du_i * du_i * dv_i * dv_i * dv_i * dv_i + 4 * du_i * du_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i - 15 * du_i * du_i * du_i * du_i * du_i * du_i - 45 * du_i * du_i * du_i * du_i * dv_i * dv_i - 45 * du_i * du_i * dv_i * dv_i * dv_i * dv_i - 15 * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i + 60 * du_i * du_i * du_i * du_i + 120 * du_i * du_i * dv_i * dv_i + 60 * dv_i * dv_i * dv_i * dv_i - 60 * du_i * du_i - 60 * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
@@ -1240,7 +1240,7 @@ def hsm_error_orthogonal(star, logger=None):
     sigma2_delta1_v0 = np.sum(np.power(2 * -(6 * du_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_v0, 2))
     sigma2_delta2_u0 = np.sum(np.power(2 * 6 * du_i * dv_i * weight_i * kernel_i * data_i / normalization * sigma_u0, 2))
     sigma2_delta2_v0 = np.sum(np.power(2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_v0, 2))
-    
+
     sigma2_orth4_u0 = np.sum(np.power(2 * (4 * du_i * du_i * du_i + 4 * du_i * dv_i * dv_i - 6 * du_i) * weight_i * kernel_i * data_i / normalization * sigma_u0, 2))
     sigma2_orth4_v0 = np.sum(np.power(2 * (4 * du_i * du_i * dv_i + 4 * dv_i * dv_i * dv_i - 6 * dv_i) * weight_i * kernel_i * data_i / normalization * sigma_v0, 2))
     sigma2_orth6_u0 = np.sum(np.power(2 * (6 * du_i * du_i * du_i * du_i * du_i + 12 * du_i * du_i * du_i * dv_i * dv_i - 32 * du_i * du_i * du_i + 6 * du_i * dv_i * dv_i * dv_i * dv_i - 32 * du_i * dv_i * dv_i + 24 * du_i) * weight_i * kernel_i * data_i / normalization * sigma_u0, 2))
@@ -1257,7 +1257,7 @@ def hsm_error_orthogonal(star, logger=None):
     sigma2_zeta2_flux = np.power(zeta2_calc * sigma_normalization / normalization, 2)
     sigma2_delta1_flux = np.power(delta1_calc * sigma_normalization / normalization, 2)
     sigma2_delta2_flux = np.power(delta2_calc * sigma_normalization / normalization, 2)
-    
+
     sigma2_orth4_flux = np.power(orth4_calc * sigma_normalization / normalization, 2)
     sigma2_orth6_flux = np.power(orth6_calc * sigma_normalization / normalization, 2)
     sigma2_orth8_flux = np.power(orth8_calc * sigma_normalization / normalization, 2)
@@ -1271,7 +1271,7 @@ def hsm_error_orthogonal(star, logger=None):
     sigma_zeta2 = np.sqrt(sigma2_zeta2_data + sigma2_zeta2_u0 + sigma2_zeta2_v0 + sigma2_zeta2_flux)
     sigma_delta1 = np.sqrt(sigma2_delta1_data + sigma2_delta1_u0 + sigma2_delta1_v0 + sigma2_delta1_flux)
     sigma_delta2 = np.sqrt(sigma2_delta2_data + sigma2_delta2_u0 + sigma2_delta2_v0 + sigma2_delta2_flux)
-    
+
     sigma_orth4 = np.sqrt(sigma2_orth4_data + sigma2_orth4_u0 + sigma2_orth4_v0 + sigma2_orth4_flux)
     sigma_orth6 = np.sqrt(sigma2_orth6_data + sigma2_orth6_u0 + sigma2_orth6_v0 + sigma2_orth6_flux)
     sigma_orth8 = np.sqrt(sigma2_orth8_data + sigma2_orth8_u0 + sigma2_orth8_v0 + sigma2_orth8_flux)
@@ -1321,11 +1321,3 @@ def hsm_error_orthogonal(star, logger=None):
 #[ 1.14066351  1.07267757  1.0784058   1.14219614  1.09935112  1.10944844  1.05163579  0.99635155  0.93856219  0.93551787  1.04409945  1.01764776  0.95906311]
 
     return sigma_flux, sigma_u0, sigma_v0, sigma_e0, sigma_e1, sigma_e2, sigma_zeta1, sigma_zeta2, sigma_delta1, sigma_delta2, sigma_orth4, sigma_orth6, sigma_orth8
-
-
-
-
-
-
-
-

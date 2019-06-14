@@ -245,7 +245,7 @@ class Star(object):
             image.wcs = wcs
 
         # Build the StarData instance
-        data = StarData(image, image_pos, field_pos=field_pos, properties=properties, 
+        data = StarData(image, image_pos, field_pos=field_pos, properties=properties,
                         pointing=pointing)
         fit = StarFit(None, flux=flux, center=(0.,0.))
         return cls(data, fit)
