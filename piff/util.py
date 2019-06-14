@@ -310,9 +310,6 @@ def hsm_error(star, logger=None, return_debug=False, return_error=True):
     if not return_error:
         return flux_calc, u0_calc, v0_calc, e0_calc, e1_calc, e2_calc
 
-    # normalization for the various sums over pixels
-    normalization2 = normalization * normalization
-
     sigma2_data_i = 1. / weight_i
     sigma2_normalization = np.sum(np.power(weight_i ** 2 * kernel_i ** 2, 2) * sigma2_data_i)
     sigma_normalization = np.sqrt(sigma2_normalization)
@@ -540,10 +537,6 @@ def hsm_error_third_moments(star, logger=None):
     delta2_calc = -(Mvvv - 3 * Muuv)
 
     #return flux_calc, u0_calc, v0_calc, e0_calc, e1_calc, e2_calc, zeta1_calc, zeta2_calc, delta1_calc, delta2_calc
-
-
-    # normalization for the various sums over pixels
-    normalization2 = normalization * normalization
 
     sigma2_data_i = 1. / weight_i
     sigma2_normalization = np.sum(np.power(weight_i ** 2 * kernel_i ** 2, 2) * sigma2_data_i)
@@ -824,10 +817,6 @@ def hsm_error_fourth_moments(star, logger=None):
     lambda2_calc = 4 * Muuuv - 4 * Muvvv
 
     #return flux_calc, u0_calc, v0_calc, e0_calc, e1_calc, e2_calc, zeta1_calc, zeta2_calc, delta1_calc, delta2_calc, xi_calc, eta1_calc, eta2_calc, lambda1_calc, lambda2_calc
-
-
-    # normalization for the various sums over pixels
-    normalization2 = normalization * normalization
 
     sigma2_data_i = 1. / weight_i
     sigma2_normalization = np.sum(np.power(weight_i ** 2 * kernel_i ** 2, 2) * sigma2_data_i)
@@ -1179,10 +1168,6 @@ def hsm_error_orthogonal(star, logger=None):
     orth8_calc = Muuuuuuuu + 4 * Muuuuuuvv + 6 * Muuuuvvvv + 4 * Muuvvvvvv + Mvvvvvvvv - 15 * Muuuuuu - 45 * Muuuuvv - 45 * Muuvvvv - 15 * Mvvvvvv + 60 * Muuuu + 120 * Muuvv + 60 * Mvvvv - 60 * Muu - 60 * Mvv
 
     #return flux_calc, u0_calc, v0_calc, e0_calc, e1_calc, e2_calc, zeta1_calc, zeta2_calc, delta1_calc, delta2_calc, orth4_calc, orth6_calc, orth8_calc
-
-
-    # normalization for the various sums over pixels
-    normalization2 = normalization * normalization
 
     sigma2_data_i = 1. / weight_i
     sigma2_normalization = np.sum(np.power(weight_i ** 2 * kernel_i ** 2, 2) * sigma2_data_i)
