@@ -257,15 +257,16 @@ def hsm_error(star, logger=None, return_debug=False, return_error=True):
     from .gsobject_model import Gaussian
     from .star import Star
 
-    star = star.copy()
-
     # get vectors for data, weight and u, v
     data_i, weight_i, u_i, v_i = star.data.getDataVector(include_zero_weight=True)
     # also get the values for the HSM kernel, which is just the fitted hsm model
     flux, cenu, cenv, size, g1, g2, flag = hsm(star)
     profile = galsim.Gaussian(sigma=1.0).dilate(size).shear(g1=g1, g2=g2).shift(cenu, cenv) * flux
-    image = star.image.copy()
-    profile.drawImage(image, method='no_pixel', offset=(star.image_pos-image.true_center))
+    image = profile.drawImage(
+        star.image.copy(),
+        method='no_pixel',
+        offset=(star.image_pos-star.image.true_center)
+    )
     # convert image into kernel
     kernel_i = image.array.flatten()
 
@@ -417,15 +418,16 @@ def hsm_third_moments(star, logger=None):
     from .gsobject_model import Gaussian
     from .star import Star
 
-    star = star.copy()
-
     # get vectors for data, weight and u, v
     data_i, weight_i, u_i, v_i = star.data.getDataVector(include_zero_weight=True)
     # also get the values for the HSM kernel, which is just the fitted hsm model
     flux, cenu, cenv, size, g1, g2, flag = hsm(star)
     profile = galsim.Gaussian(sigma=1.0).dilate(size).shear(g1=g1, g2=g2).shift(cenu, cenv) * flux
-    image = star.image.copy()
-    profile.drawImage(image, method='no_pixel', offset=(star.image_pos-image.true_center))
+    image = profile.drawImage(
+        star.image.copy(),
+        method='no_pixel',
+        offset=(star.image_pos-star.image.true_center)
+    )
     # convert image into kernel
     kernel_i = image.array.flatten()
 
@@ -486,15 +488,16 @@ def hsm_error_third_moments(star, logger=None):
     from .gsobject_model import Gaussian
     from .star import Star
 
-    star = star.copy()
-
     # get vectors for data, weight and u, v
     data_i, weight_i, u_i, v_i = star.data.getDataVector(include_zero_weight=True)
     # also get the values for the HSM kernel, which is just the fitted hsm model
     flux, cenu, cenv, size, g1, g2, flag = hsm(star)
     profile = galsim.Gaussian(sigma=1.0).dilate(size).shear(g1=g1, g2=g2).shift(cenu, cenv) * flux
-    image = star.image.copy()
-    profile.drawImage(image, method='no_pixel', offset=(star.image_pos-image.true_center))
+    image = profile.drawImage(
+        star.image.copy(),
+        method='no_pixel',
+        offset=(star.image_pos-star.image.true_center)
+    )
     # convert image into kernel
     kernel_i = image.array.flatten()
 
@@ -672,15 +675,16 @@ def hsm_fourth_moments(star, logger=None):
     from .gsobject_model import Gaussian
     from .star import Star
 
-    star = star.copy()
-
     # get vectors for data, weight and u, v
     data_i, weight_i, u_i, v_i = star.data.getDataVector(include_zero_weight=True)
     # also get the values for the HSM kernel, which is just the fitted hsm model
     flux, cenu, cenv, size, g1, g2, flag = hsm(star)
     profile = galsim.Gaussian(sigma=1.0).dilate(size).shear(g1=g1, g2=g2).shift(cenu, cenv) * flux
-    image = star.image.copy()
-    profile.drawImage(image, method='no_pixel', offset=(star.image_pos-image.true_center))
+    image =profile.drawImage(
+        star.image.copy(),
+        method='no_pixel',
+        offset=(star.image_pos-star.image.true_center)
+    )
     # convert image into kernel
     kernel_i = image.array.flatten()
 
@@ -755,15 +759,16 @@ def hsm_error_fourth_moments(star, logger=None):
     from .gsobject_model import Gaussian
     from .star import Star
 
-    star = star.copy()
-
     # get vectors for data, weight and u, v
     data_i, weight_i, u_i, v_i = star.data.getDataVector(include_zero_weight=True)
     # also get the values for the HSM kernel, which is just the fitted hsm model
     flux, cenu, cenv, size, g1, g2, flag = hsm(star)
     profile = galsim.Gaussian(sigma=1.0).dilate(size).shear(g1=g1, g2=g2).shift(cenu, cenv) * flux
-    image = star.image.copy()
-    profile.drawImage(image, method='no_pixel', offset=(star.image_pos-image.true_center))
+    image = profile.drawImage(
+        star.image.copy(),
+        method='no_pixel',
+        offset=(star.image_pos-star.image.true_center)
+    )
     # convert image into kernel
     kernel_i = image.array.flatten()
 
@@ -999,15 +1004,16 @@ def hsm_orthogonal(star, logger=None):
     from .gsobject_model import Gaussian
     from .star import Star
 
-    star = star.copy()
-
     # get vectors for data, weight and u, v
     data_i, weight_i, u_i, v_i = star.data.getDataVector(include_zero_weight=True)
     # also get the values for the HSM kernel, which is just the fitted hsm model
     flux, cenu, cenv, size, g1, g2, flag = hsm(star)
     profile = galsim.Gaussian(sigma=1.0).dilate(size).shear(g1=g1, g2=g2).shift(cenu, cenv) * flux
-    image = star.image.copy()
-    profile.drawImage(image, method='no_pixel', offset=(star.image_pos-image.true_center))
+    image = profile.drawImage(
+        star.image.copy(),
+        method='no_pixel',
+        offset=(star.image_pos-star.image.true_center)
+    )
     # convert image into kernel
     kernel_i = image.array.flatten()
 
@@ -1095,15 +1101,16 @@ def hsm_error_orthogonal(star, logger=None):
     from .gsobject_model import Gaussian
     from .star import Star
 
-    star = star.copy()
-
     # get vectors for data, weight and u, v
     data_i, weight_i, u_i, v_i = star.data.getDataVector(include_zero_weight=True)
     # also get the values for the HSM kernel, which is just the fitted hsm model
     flux, cenu, cenv, size, g1, g2, flag = hsm(star)
     profile = galsim.Gaussian(sigma=1.0).dilate(size).shear(g1=g1, g2=g2).shift(cenu, cenv) * flux
-    image = star.image.copy()
-    profile.drawImage(image, method='no_pixel', offset=(star.image_pos-image.true_center))
+    image = profile.drawImage(
+        star.image.copy(),
+        method='no_pixel',
+        offset=(star.image_pos-star.image.true_center)
+    )
     # convert image into kernel
     kernel_i = image.array.flatten()
 
