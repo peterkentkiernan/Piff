@@ -314,7 +314,7 @@ def hsm_error(star, logger=None, return_debug=False, return_error=True):
         return flux_calc, u0_calc, v0_calc, e0_calc, e1_calc, e2_calc
 
     sigma2_data_i = 1. / weight_i
-    sigma2_normalization = np.sum(np.power(wk_i**2, 2) * sigma2_data_i)  # I think this is an error!
+    sigma2_normalization = np.sum(wk_i**4 * sigma2_data_i)  # I think this is an error!
     sigma_normalization = np.sqrt(sigma2_normalization)
     # flux is 2x normalization in hsm.cpp, so probably a factor of 2 here
     sigma_flux = 2 * sigma_normalization
@@ -328,12 +328,12 @@ def hsm_error(star, logger=None, return_debug=False, return_error=True):
     # u0, v0
     #####
 
-    sigma2_u0_data = np.sum(np.power(wk_i * u_i / normalization, 2) * sigma2_data_i)
-    sigma2_v0_data = np.sum(np.power(wk_i * v_i / normalization, 2) * sigma2_data_i)
+    sigma2_u0_data = np.sum((wk_i * u_i / normalization)**2 * sigma2_data_i)
+    sigma2_v0_data = np.sum((wk_i * v_i / normalization)**2 * sigma2_data_i)
 
     # add sigma_normalization
-    sigma2_u0_flux = np.power(u0_calc * sigma_normalization / normalization, 2)
-    sigma2_v0_flux = np.power(v0_calc * sigma_normalization / normalization, 2)
+    sigma2_u0_flux = (u0_calc * sigma_normalization / normalization)**2
+    sigma2_v0_flux = (v0_calc * sigma_normalization / normalization)**2
 
     # technically we also need the contribution to the kernel!
 
@@ -347,22 +347,22 @@ def hsm_error(star, logger=None, return_debug=False, return_error=True):
     # now calculate errors: ie. shot and read noise per pixel
 
     # three terms: those proportional to: sdata_i, sigma_u0 and sigma_v0, and sigma_normalization
-    sigma2_e0_data = np.sum(np.power(2 * wk_i * (du_i * du_i + dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_e1_data = np.sum(np.power(2 * wk_i * (du_i * du_i - dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_e2_data = np.sum(np.power(2 * wk_i * 2 * du_i * dv_i / normalization, 2) * sigma2_data_i)
+    sigma2_e0_data = np.sum((2 * wk_i * (du_i * du_i + dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_e1_data = np.sum((2 * wk_i * (du_i * du_i - dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_e2_data = np.sum((2 * wk_i * 2 * du_i * dv_i / normalization)**2 * sigma2_data_i)
 
     # add sigma_u0, sigma_v0. This is ignoring the kernel!
-    sigma2_e0_u0 = np.sum(np.power(4 * du_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_e0_v0 = np.sum(np.power(4 * dv_i * wkd_i / normalization * sigma_v0, 2))
+    sigma2_e0_u0 = np.sum((4 * du_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_e0_v0 = np.sum((4 * dv_i * wkd_i / normalization * sigma_v0)**2)
     sigma2_e1_u0 = sigma2_e0_u0
     sigma2_e1_v0 = sigma2_e0_v0
-    sigma2_e2_u0 = np.sum(np.power(4 * dv_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_e2_v0 = np.sum(np.power(4 * du_i * wkd_i / normalization * sigma_v0, 2))
+    sigma2_e2_u0 = np.sum((4 * dv_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_e2_v0 = np.sum((4 * du_i * wkd_i / normalization * sigma_v0)**2)
 
     # add sigma_normalization
-    sigma2_e0_flux = np.power(e0_calc * sigma_normalization / normalization, 2)
-    sigma2_e1_flux = np.power(e1_calc * sigma_normalization / normalization, 2)
-    sigma2_e2_flux = np.power(e2_calc * sigma_normalization / normalization, 2)
+    sigma2_e0_flux = (e0_calc * sigma_normalization / normalization)**2
+    sigma2_e1_flux = (e1_calc * sigma_normalization / normalization)**2
+    sigma2_e2_flux = (e2_calc * sigma_normalization / normalization)**2
 
     # taking out the flux - e0 errors for now. lmfit finds that these two variables are highly correlated, so I'm probably missing a negative covariance term from the kernel that would bring this back in line. As it is, including sigma2_e0_flux leads to overestimated errors
     sigma_e0 = np.sqrt(sigma2_e0_data + sigma2_e0_u0 + sigma2_e0_v0)# + sigma2_e0_flux)
@@ -548,7 +548,7 @@ def hsm_error_third_moments(star, logger=None):
     #return flux_calc, u0_calc, v0_calc, e0_calc, e1_calc, e2_calc, zeta1_calc, zeta2_calc, delta1_calc, delta2_calc
 
     sigma2_data_i = 1. / weight_i
-    sigma2_normalization = np.sum(np.power(wk_i**2, 2) * sigma2_data_i)
+    sigma2_normalization = np.sum(wk_i**4 * sigma2_data_i)
     sigma_normalization = np.sqrt(sigma2_normalization)
     # flux is 2x normalization in hsm.cpp, so probably a factor of 2 here
     sigma_flux = 2 * sigma_normalization
@@ -562,12 +562,12 @@ def hsm_error_third_moments(star, logger=None):
     # u0, v0
     #####
 
-    sigma2_u0_data = np.sum(np.power(wk_i * u_i / normalization, 2) * sigma2_data_i)
-    sigma2_v0_data = np.sum(np.power(wk_i * v_i / normalization, 2) * sigma2_data_i)
+    sigma2_u0_data = np.sum((wk_i * u_i / normalization)**2 * sigma2_data_i)
+    sigma2_v0_data = np.sum((wk_i * v_i / normalization)**2 * sigma2_data_i)
 
     # add sigma_normalization
-    sigma2_u0_flux = np.power(u0_calc * sigma_normalization / normalization, 2)
-    sigma2_v0_flux = np.power(v0_calc * sigma_normalization / normalization, 2)
+    sigma2_u0_flux = (u0_calc * sigma_normalization / normalization)**2
+    sigma2_v0_flux = (v0_calc * sigma_normalization / normalization)**2
 
     # technically we also need the contribution to the kernel!
 
@@ -581,41 +581,41 @@ def hsm_error_third_moments(star, logger=None):
     # now calculate errors: ie. shot and read noise per pixel
 
     # three terms: those proportional to: sdata_i, sigma_u0 and sigma_v0, and sigma_normalization
-    sigma2_e0_data = np.sum(np.power(2 * wk_i * (du_i * du_i + dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_e1_data = np.sum(np.power(2 * wk_i * (du_i * du_i - dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_e2_data = np.sum(np.power(2 * wk_i * 2 * du_i * dv_i / normalization, 2) * sigma2_data_i)
+    sigma2_e0_data = np.sum((2 * wk_i * (du_i * du_i + dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_e1_data = np.sum((2 * wk_i * (du_i * du_i - dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_e2_data = np.sum((2 * wk_i * 2 * du_i * dv_i / normalization)**2 * sigma2_data_i)
 
-    sigma2_zeta1_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i + du_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_zeta2_data = np.sum(np.power(2 * wk_i * (dv_i * dv_i * dv_i + du_i * du_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_delta1_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i - 3 * du_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_delta2_data = np.sum(np.power(2 * wk_i * -(dv_i * dv_i * dv_i - 3 * du_i * du_i * dv_i) / normalization, 2) * sigma2_data_i)
+    sigma2_zeta1_data = np.sum((2 * wk_i * (du_i * du_i * du_i + du_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_zeta2_data = np.sum((2 * wk_i * (dv_i * dv_i * dv_i + du_i * du_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_delta1_data = np.sum((2 * wk_i * (du_i * du_i * du_i - 3 * du_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_delta2_data = np.sum((2 * wk_i * -(dv_i * dv_i * dv_i - 3 * du_i * du_i * dv_i) / normalization)**2 * sigma2_data_i)
 
     # add sigma_u0, sigma_v0. This is ignoring the kernel!
-    sigma2_e0_u0 = np.sum(np.power(4 * du_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_e0_v0 = np.sum(np.power(4 * dv_i * wkd_i / normalization * sigma_v0, 2))
+    sigma2_e0_u0 = np.sum((4 * du_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_e0_v0 = np.sum((4 * dv_i * wkd_i / normalization * sigma_v0)**2)
     sigma2_e1_u0 = sigma2_e0_u0
     sigma2_e1_v0 = sigma2_e0_v0
-    sigma2_e2_u0 = np.sum(np.power(4 * dv_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_e2_v0 = np.sum(np.power(4 * du_i * wkd_i / normalization * sigma_v0, 2))
+    sigma2_e2_u0 = np.sum((4 * dv_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_e2_v0 = np.sum((4 * du_i * wkd_i / normalization * sigma_v0)**2)
 
-    sigma2_zeta1_u0 = np.sum(np.power(2 * (3 * du_i * du_i + dv_i * dv_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_zeta1_v0 = np.sum(np.power(4 * du_i * dv_i * wkd_i / normalization * sigma_v0, 2))
-    sigma2_zeta2_u0 = np.sum(np.power(4 * du_i * dv_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_zeta2_v0 = np.sum(np.power(2 * (du_i * du_i + 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_delta1_u0 = np.sum(np.power(2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_delta1_v0 = np.sum(np.power(2 * -(6 * du_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_delta2_u0 = np.sum(np.power(2 * 6 * du_i * dv_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_delta2_v0 = np.sum(np.power(2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
+    sigma2_zeta1_u0 = np.sum((2 * (3 * du_i * du_i + dv_i * dv_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_zeta1_v0 = np.sum((4 * du_i * dv_i * wkd_i / normalization * sigma_v0)**2)
+    sigma2_zeta2_u0 = np.sum((4 * du_i * dv_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_zeta2_v0 = np.sum((2 * (du_i * du_i + 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_delta1_u0 = np.sum((2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_delta1_v0 = np.sum((2 * -(6 * du_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_delta2_u0 = np.sum((2 * 6 * du_i * dv_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_delta2_v0 = np.sum((2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
 
     # add sigma_normalization
-    sigma2_e0_flux = np.power(e0_calc * sigma_normalization / normalization, 2)
-    sigma2_e1_flux = np.power(e1_calc * sigma_normalization / normalization, 2)
-    sigma2_e2_flux = np.power(e2_calc * sigma_normalization / normalization, 2)
+    sigma2_e0_flux = (e0_calc * sigma_normalization / normalization)**2
+    sigma2_e1_flux = (e1_calc * sigma_normalization / normalization)**2
+    sigma2_e2_flux = (e2_calc * sigma_normalization / normalization)**2
 
-    sigma2_zeta1_flux = np.power(zeta1_calc * sigma_normalization / normalization, 2)
-    sigma2_zeta2_flux = np.power(zeta2_calc * sigma_normalization / normalization, 2)
-    sigma2_delta1_flux = np.power(delta1_calc * sigma_normalization / normalization, 2)
-    sigma2_delta2_flux = np.power(delta2_calc * sigma_normalization / normalization, 2)
+    sigma2_zeta1_flux = (zeta1_calc * sigma_normalization / normalization)**2
+    sigma2_zeta2_flux = (zeta2_calc * sigma_normalization / normalization)**2
+    sigma2_delta1_flux = (delta1_calc * sigma_normalization / normalization)**2
+    sigma2_delta2_flux = (delta2_calc * sigma_normalization / normalization)**2
 
     # taking out the flux - e0 errors for now. lmfit finds that these two variables are highly correlated, so I'm probably missing a negative covariance term from the kernel that would bring this back in line. As it is, including sigma2_e0_flux leads to overestimated errors
     sigma_e0 = np.sqrt(sigma2_e0_data + sigma2_e0_u0 + sigma2_e0_v0)# + sigma2_e0_flux)
@@ -834,7 +834,7 @@ def hsm_error_fourth_moments(star, logger=None):
     #return flux_calc, u0_calc, v0_calc, e0_calc, e1_calc, e2_calc, zeta1_calc, zeta2_calc, delta1_calc, delta2_calc, xi_calc, eta1_calc, eta2_calc, lambda1_calc, lambda2_calc
 
     sigma2_data_i = 1. / weight_i
-    sigma2_normalization = np.sum(np.power(wk_i**2, 2) * sigma2_data_i)
+    sigma2_normalization = np.sum(wk_i**4 * sigma2_data_i)
     sigma_normalization = np.sqrt(sigma2_normalization)
     # flux is 2x normalization in hsm.cpp, so probably a factor of 2 here
     sigma_flux = 2 * sigma_normalization
@@ -848,12 +848,12 @@ def hsm_error_fourth_moments(star, logger=None):
     # u0, v0
     #####
 
-    sigma2_u0_data = np.sum(np.power(wk_i * u_i / normalization, 2) * sigma2_data_i)
-    sigma2_v0_data = np.sum(np.power(wk_i * v_i / normalization, 2) * sigma2_data_i)
+    sigma2_u0_data = np.sum((wk_i * u_i / normalization)**2 * sigma2_data_i)
+    sigma2_v0_data = np.sum((wk_i * v_i / normalization)**2 * sigma2_data_i)
 
     # add sigma_normalization
-    sigma2_u0_flux = np.power(u0_calc * sigma_normalization / normalization, 2)
-    sigma2_v0_flux = np.power(v0_calc * sigma_normalization / normalization, 2)
+    sigma2_u0_flux = (u0_calc * sigma_normalization / normalization)**2
+    sigma2_v0_flux = (v0_calc * sigma_normalization / normalization)**2
 
     # technically we also need the contribution to the kernel!
 
@@ -867,64 +867,64 @@ def hsm_error_fourth_moments(star, logger=None):
     # now calculate errors: ie. shot and read noise per pixel
 
     # three terms: those proportional to: sdata_i, sigma_u0 and sigma_v0, and sigma_normalization
-    sigma2_e0_data = np.sum(np.power(2 * wk_i * (du_i * du_i + dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_e1_data = np.sum(np.power(2 * wk_i * (du_i * du_i - dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_e2_data = np.sum(np.power(2 * wk_i * 2 * du_i * dv_i / normalization, 2) * sigma2_data_i)
+    sigma2_e0_data = np.sum((2 * wk_i * (du_i * du_i + dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_e1_data = np.sum((2 * wk_i * (du_i * du_i - dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_e2_data = np.sum((2 * wk_i * 2 * du_i * dv_i / normalization)**2 * sigma2_data_i)
 
-    sigma2_zeta1_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i + du_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_zeta2_data = np.sum(np.power(2 * wk_i * (dv_i * dv_i * dv_i + du_i * du_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_delta1_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i - 3 * du_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_delta2_data = np.sum(np.power(2 * wk_i * -(dv_i * dv_i * dv_i - 3 * du_i * du_i * dv_i) / normalization, 2) * sigma2_data_i)
+    sigma2_zeta1_data = np.sum((2 * wk_i * (du_i * du_i * du_i + du_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_zeta2_data = np.sum((2 * wk_i * (dv_i * dv_i * dv_i + du_i * du_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_delta1_data = np.sum((2 * wk_i * (du_i * du_i * du_i - 3 * du_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_delta2_data = np.sum((2 * wk_i * -(dv_i * dv_i * dv_i - 3 * du_i * du_i * dv_i) / normalization)**2 * sigma2_data_i)
 
-    sigma2_xi_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i * du_i + 2 * du_i * du_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_eta1_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i * du_i - dv_i * dv_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_eta2_data = np.sum(np.power(2 * wk_i * (2 * du_i * du_i * du_i * dv_i + 2 * du_i * dv_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_lambda1_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i * du_i - 6 * du_i * du_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_lambda2_data = np.sum(np.power(2 * wk_i * (4 * du_i * du_i * du_i * dv_i - 4 * du_i * dv_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
+    sigma2_xi_data = np.sum((2 * wk_i * (du_i * du_i * du_i * du_i + 2 * du_i * du_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_eta1_data = np.sum((2 * wk_i * (du_i * du_i * du_i * du_i - dv_i * dv_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_eta2_data = np.sum((2 * wk_i * (2 * du_i * du_i * du_i * dv_i + 2 * du_i * dv_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_lambda1_data = np.sum((2 * wk_i * (du_i * du_i * du_i * du_i - 6 * du_i * du_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_lambda2_data = np.sum((2 * wk_i * (4 * du_i * du_i * du_i * dv_i - 4 * du_i * dv_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
 
     # add sigma_u0, sigma_v0. This is ignoring the kernel!
-    sigma2_e0_u0 = np.sum(np.power(4 * du_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_e0_v0 = np.sum(np.power(4 * dv_i * wkd_i / normalization * sigma_v0, 2))
+    sigma2_e0_u0 = np.sum((4 * du_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_e0_v0 = np.sum((4 * dv_i * wkd_i / normalization * sigma_v0)**2)
     sigma2_e1_u0 = sigma2_e0_u0
     sigma2_e1_v0 = sigma2_e0_v0
-    sigma2_e2_u0 = np.sum(np.power(4 * dv_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_e2_v0 = np.sum(np.power(4 * du_i * wkd_i / normalization * sigma_v0, 2))
+    sigma2_e2_u0 = np.sum((4 * dv_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_e2_v0 = np.sum((4 * du_i * wkd_i / normalization * sigma_v0)**2)
 
-    sigma2_zeta1_u0 = np.sum(np.power(2 * (3 * du_i * du_i + dv_i * dv_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_zeta1_v0 = np.sum(np.power(4 * du_i * dv_i * wkd_i / normalization * sigma_v0, 2))
-    sigma2_zeta2_u0 = np.sum(np.power(4 * du_i * dv_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_zeta2_v0 = np.sum(np.power(2 * (du_i * du_i + 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_delta1_u0 = np.sum(np.power(2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_delta1_v0 = np.sum(np.power(2 * -(6 * du_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_delta2_u0 = np.sum(np.power(2 * 6 * du_i * dv_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_delta2_v0 = np.sum(np.power(2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
+    sigma2_zeta1_u0 = np.sum((2 * (3 * du_i * du_i + dv_i * dv_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_zeta1_v0 = np.sum((4 * du_i * dv_i * wkd_i / normalization * sigma_v0)**2)
+    sigma2_zeta2_u0 = np.sum((4 * du_i * dv_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_zeta2_v0 = np.sum((2 * (du_i * du_i + 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_delta1_u0 = np.sum((2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_delta1_v0 = np.sum((2 * -(6 * du_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_delta2_u0 = np.sum((2 * 6 * du_i * dv_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_delta2_v0 = np.sum((2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
 
-    sigma2_xi_u0 = np.sum(np.power(2 * (4 * du_i * du_i * du_i + 4 * du_i * dv_i * dv_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_xi_v0 = np.sum(np.power(2 * (4 * du_i * du_i * dv_i + 4 * dv_i * dv_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_eta1_u0 = np.sum(np.power(2 * 4 * du_i * du_i * du_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_eta1_v0 = np.sum(np.power(2 * -(4 * dv_i * dv_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_eta2_u0 = np.sum(np.power(2 * (6 * du_i * du_i * dv_i + 2 * dv_i * dv_i * dv_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_eta2_v0 = np.sum(np.power(2 * (2 * du_i * du_i * du_i + 6 * du_i * dv_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_lambda1_u0 = np.sum(np.power(2 * (4 * du_i * du_i * du_i - 12 * du_i * dv_i * dv_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_lambda1_v0 = np.sum(np.power(2 * (4 * dv_i * dv_i * dv_i - 12 * du_i * du_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_lambda2_u0 = np.sum(np.power(2 * (12 * du_i * du_i * dv_i - 4 * dv_i * dv_i * dv_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_lambda2_v0 = np.sum(np.power(2 * (4 * du_i * du_i * du_i - 12 * du_i * dv_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
+    sigma2_xi_u0 = np.sum((2 * (4 * du_i * du_i * du_i + 4 * du_i * dv_i * dv_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_xi_v0 = np.sum((2 * (4 * du_i * du_i * dv_i + 4 * dv_i * dv_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_eta1_u0 = np.sum((2 * 4 * du_i * du_i * du_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_eta1_v0 = np.sum((2 * -(4 * dv_i * dv_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_eta2_u0 = np.sum((2 * (6 * du_i * du_i * dv_i + 2 * dv_i * dv_i * dv_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_eta2_v0 = np.sum((2 * (2 * du_i * du_i * du_i + 6 * du_i * dv_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_lambda1_u0 = np.sum((2 * (4 * du_i * du_i * du_i - 12 * du_i * dv_i * dv_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_lambda1_v0 = np.sum((2 * (4 * dv_i * dv_i * dv_i - 12 * du_i * du_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_lambda2_u0 = np.sum((2 * (12 * du_i * du_i * dv_i - 4 * dv_i * dv_i * dv_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_lambda2_v0 = np.sum((2 * (4 * du_i * du_i * du_i - 12 * du_i * dv_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
 
     # add sigma_normalization
-    sigma2_e0_flux = np.power(e0_calc * sigma_normalization / normalization, 2)
-    sigma2_e1_flux = np.power(e1_calc * sigma_normalization / normalization, 2)
-    sigma2_e2_flux = np.power(e2_calc * sigma_normalization / normalization, 2)
+    sigma2_e0_flux = (e0_calc * sigma_normalization / normalization)**2
+    sigma2_e1_flux = (e1_calc * sigma_normalization / normalization)**2
+    sigma2_e2_flux = (e2_calc * sigma_normalization / normalization)**2
 
-    sigma2_zeta1_flux = np.power(zeta1_calc * sigma_normalization / normalization, 2)
-    sigma2_zeta2_flux = np.power(zeta2_calc * sigma_normalization / normalization, 2)
-    sigma2_delta1_flux = np.power(delta1_calc * sigma_normalization / normalization, 2)
-    sigma2_delta2_flux = np.power(delta2_calc * sigma_normalization / normalization, 2)
+    sigma2_zeta1_flux = (zeta1_calc * sigma_normalization / normalization)**2
+    sigma2_zeta2_flux = (zeta2_calc * sigma_normalization / normalization)**2
+    sigma2_delta1_flux = (delta1_calc * sigma_normalization / normalization)**2
+    sigma2_delta2_flux = (delta2_calc * sigma_normalization / normalization)**2
 
-    sigma2_xi_flux = np.power(xi_calc * sigma_normalization / normalization, 2)
-    sigma2_eta1_flux = np.power(eta1_calc * sigma_normalization / normalization, 2)
-    sigma2_eta2_flux = np.power(eta2_calc * sigma_normalization / normalization, 2)
-    sigma2_lambda1_flux = np.power(lambda1_calc * sigma_normalization / normalization, 2)
-    sigma2_lambda2_flux = np.power(lambda2_calc * sigma_normalization / normalization, 2)
+    sigma2_xi_flux = (xi_calc * sigma_normalization / normalization)**2
+    sigma2_eta1_flux = (eta1_calc * sigma_normalization / normalization)**2
+    sigma2_eta2_flux = (eta2_calc * sigma_normalization / normalization)**2
+    sigma2_lambda1_flux = (lambda1_calc * sigma_normalization / normalization)**2
+    sigma2_lambda2_flux = (lambda2_calc * sigma_normalization / normalization)**2
 
     # taking out the flux - e0 errors for now. lmfit finds that these two variables are highly correlated, so I'm probably missing a negative covariance term from the kernel that would bring this back in line. As it is, including sigma2_e0_flux leads to overestimated errors
     sigma_e0 = np.sqrt(sigma2_e0_data + sigma2_e0_u0 + sigma2_e0_v0)# + sigma2_e0_flux)
@@ -1191,7 +1191,7 @@ def hsm_error_orthogonal(star, logger=None):
     #return flux_calc, u0_calc, v0_calc, e0_calc, e1_calc, e2_calc, zeta1_calc, zeta2_calc, delta1_calc, delta2_calc, orth4_calc, orth6_calc, orth8_calc
 
     sigma2_data_i = 1. / weight_i
-    sigma2_normalization = np.sum(np.power(wk_i**2, 2) * sigma2_data_i)
+    sigma2_normalization = np.sum(wk_i**4 * sigma2_data_i)
     sigma_normalization = np.sqrt(sigma2_normalization)
     # flux is 2x normalization in hsm.cpp, so probably a factor of 2 here
     sigma_flux = 2 * sigma_normalization
@@ -1205,12 +1205,12 @@ def hsm_error_orthogonal(star, logger=None):
     # u0, v0
     #####
 
-    sigma2_u0_data = np.sum(np.power(wk_i * u_i / normalization, 2) * sigma2_data_i)
-    sigma2_v0_data = np.sum(np.power(wk_i * v_i / normalization, 2) * sigma2_data_i)
+    sigma2_u0_data = np.sum((wk_i * u_i / normalization)**2 * sigma2_data_i)
+    sigma2_v0_data = np.sum((wk_i * v_i / normalization)**2 * sigma2_data_i)
 
     # add sigma_normalization
-    sigma2_u0_flux = np.power(u0_calc * sigma_normalization / normalization, 2)
-    sigma2_v0_flux = np.power(v0_calc * sigma_normalization / normalization, 2)
+    sigma2_u0_flux = (u0_calc * sigma_normalization / normalization)**2
+    sigma2_v0_flux = (v0_calc * sigma_normalization / normalization)**2
 
     # technically we also need the contribution to the kernel!
 
@@ -1224,56 +1224,56 @@ def hsm_error_orthogonal(star, logger=None):
     # now calculate errors: ie. shot and read noise per pixel
 
     # three terms: those proportional to: sdata_i, sigma_u0 and sigma_v0, and sigma_normalization
-    sigma2_e0_data = np.sum(np.power(2 * wk_i * (du_i * du_i + dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_e1_data = np.sum(np.power(2 * wk_i * (du_i * du_i - dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_e2_data = np.sum(np.power(2 * wk_i * 2 * du_i * dv_i / normalization, 2) * sigma2_data_i)
+    sigma2_e0_data = np.sum((2 * wk_i * (du_i * du_i + dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_e1_data = np.sum((2 * wk_i * (du_i * du_i - dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_e2_data = np.sum((2 * wk_i * 2 * du_i * dv_i / normalization)**2 * sigma2_data_i)
 
-    sigma2_zeta1_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i + du_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_zeta2_data = np.sum(np.power(2 * wk_i * (dv_i * dv_i * dv_i + du_i * du_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_delta1_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i - 3 * du_i * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_delta2_data = np.sum(np.power(2 * wk_i * -(dv_i * dv_i * dv_i - 3 * du_i * du_i * dv_i) / normalization, 2) * sigma2_data_i)
+    sigma2_zeta1_data = np.sum((2 * wk_i * (du_i * du_i * du_i + du_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_zeta2_data = np.sum((2 * wk_i * (dv_i * dv_i * dv_i + du_i * du_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_delta1_data = np.sum((2 * wk_i * (du_i * du_i * du_i - 3 * du_i * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_delta2_data = np.sum((2 * wk_i * -(dv_i * dv_i * dv_i - 3 * du_i * du_i * dv_i) / normalization)**2 * sigma2_data_i)
 
-    sigma2_orth4_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i * du_i + 2 * du_i * du_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i - 3 * du_i * du_i - 3 * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_orth6_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i * du_i * du_i * du_i + 3 * du_i * du_i * du_i * du_i * dv_i * dv_i + 3 * du_i * du_i * dv_i * dv_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i * dv_i * dv_i - 8 * du_i * du_i * du_i * du_i -16 * du_i * du_i * dv_i * dv_i - 8 * dv_i * dv_i * dv_i * dv_i + 12 * du_i * du_i + 12 * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
-    sigma2_orth8_data = np.sum(np.power(2 * wk_i * (du_i * du_i * du_i * du_i * du_i * du_i * du_i * du_i + 4 * du_i * du_i * du_i * du_i * du_i * du_i * dv_i * dv_i + 6 * du_i * du_i * du_i * du_i * dv_i * dv_i * dv_i * dv_i + 4 * du_i * du_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i - 15 * du_i * du_i * du_i * du_i * du_i * du_i - 45 * du_i * du_i * du_i * du_i * dv_i * dv_i - 45 * du_i * du_i * dv_i * dv_i * dv_i * dv_i - 15 * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i + 60 * du_i * du_i * du_i * du_i + 120 * du_i * du_i * dv_i * dv_i + 60 * dv_i * dv_i * dv_i * dv_i - 60 * du_i * du_i - 60 * dv_i * dv_i) / normalization, 2) * sigma2_data_i)
+    sigma2_orth4_data = np.sum((2 * wk_i * (du_i * du_i * du_i * du_i + 2 * du_i * du_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i - 3 * du_i * du_i - 3 * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_orth6_data = np.sum((2 * wk_i * (du_i * du_i * du_i * du_i * du_i * du_i + 3 * du_i * du_i * du_i * du_i * dv_i * dv_i + 3 * du_i * du_i * dv_i * dv_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i * dv_i * dv_i - 8 * du_i * du_i * du_i * du_i -16 * du_i * du_i * dv_i * dv_i - 8 * dv_i * dv_i * dv_i * dv_i + 12 * du_i * du_i + 12 * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
+    sigma2_orth8_data = np.sum((2 * wk_i * (du_i * du_i * du_i * du_i * du_i * du_i * du_i * du_i + 4 * du_i * du_i * du_i * du_i * du_i * du_i * dv_i * dv_i + 6 * du_i * du_i * du_i * du_i * dv_i * dv_i * dv_i * dv_i + 4 * du_i * du_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i + dv_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i - 15 * du_i * du_i * du_i * du_i * du_i * du_i - 45 * du_i * du_i * du_i * du_i * dv_i * dv_i - 45 * du_i * du_i * dv_i * dv_i * dv_i * dv_i - 15 * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i + 60 * du_i * du_i * du_i * du_i + 120 * du_i * du_i * dv_i * dv_i + 60 * dv_i * dv_i * dv_i * dv_i - 60 * du_i * du_i - 60 * dv_i * dv_i) / normalization)**2 * sigma2_data_i)
 
     # add sigma_u0, sigma_v0. This is ignoring the kernel!
-    sigma2_e0_u0 = np.sum(np.power(4 * du_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_e0_v0 = np.sum(np.power(4 * dv_i * wkd_i / normalization * sigma_v0, 2))
+    sigma2_e0_u0 = np.sum((4 * du_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_e0_v0 = np.sum((4 * dv_i * wkd_i / normalization * sigma_v0)**2)
     sigma2_e1_u0 = sigma2_e0_u0
     sigma2_e1_v0 = sigma2_e0_v0
-    sigma2_e2_u0 = np.sum(np.power(4 * dv_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_e2_v0 = np.sum(np.power(4 * du_i * wkd_i / normalization * sigma_v0, 2))
+    sigma2_e2_u0 = np.sum((4 * dv_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_e2_v0 = np.sum((4 * du_i * wkd_i / normalization * sigma_v0)**2)
 
-    sigma2_zeta1_u0 = np.sum(np.power(2 * (3 * du_i * du_i + dv_i * dv_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_zeta1_v0 = np.sum(np.power(4 * du_i * dv_i * wkd_i / normalization * sigma_v0, 2))
-    sigma2_zeta2_u0 = np.sum(np.power(4 * du_i * dv_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_zeta2_v0 = np.sum(np.power(2 * (du_i * du_i + 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_delta1_u0 = np.sum(np.power(2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_delta1_v0 = np.sum(np.power(2 * -(6 * du_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_delta2_u0 = np.sum(np.power(2 * 6 * du_i * dv_i * wkd_i / normalization * sigma_u0, 2))
-    sigma2_delta2_v0 = np.sum(np.power(2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0, 2))
+    sigma2_zeta1_u0 = np.sum((2 * (3 * du_i * du_i + dv_i * dv_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_zeta1_v0 = np.sum((4 * du_i * dv_i * wkd_i / normalization * sigma_v0)**2)
+    sigma2_zeta2_u0 = np.sum((4 * du_i * dv_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_zeta2_v0 = np.sum((2 * (du_i * du_i + 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_delta1_u0 = np.sum((2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_delta1_v0 = np.sum((2 * -(6 * du_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_delta2_u0 = np.sum((2 * 6 * du_i * dv_i * wkd_i / normalization * sigma_u0)**2)
+    sigma2_delta2_v0 = np.sum((2 * (3 * du_i * du_i - 3 * dv_i * dv_i) * wkd_i / normalization * sigma_v0)**2)
 
-    sigma2_orth4_u0 = np.sum(np.power(2 * (4 * du_i * du_i * du_i + 4 * du_i * dv_i * dv_i - 6 * du_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_orth4_v0 = np.sum(np.power(2 * (4 * du_i * du_i * dv_i + 4 * dv_i * dv_i * dv_i - 6 * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_orth6_u0 = np.sum(np.power(2 * (6 * du_i * du_i * du_i * du_i * du_i + 12 * du_i * du_i * du_i * dv_i * dv_i - 32 * du_i * du_i * du_i + 6 * du_i * dv_i * dv_i * dv_i * dv_i - 32 * du_i * dv_i * dv_i + 24 * du_i) * wkd_i / normalization * sigma_u0, 2))
-    sigma2_orth6_v0 = np.sum(np.power(2 * (6 * du_i * du_i * du_i * du_i * dv_i + 12 * du_i * du_i * dv_i * dv_i * dv_i - 32 * du_i * du_i * dv_i + 6 * dv_i * dv_i * dv_i * dv_i * dv_i - 32 * dv_i * dv_i * dv_i + 24 * dv_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_orth8_u0 = np.sum(np.power(2 * (8 * du_i * du_i * du_i * du_i * du_i * du_i * du_i + 24 * du_i * du_i * du_i * du_i * du_i * dv_i * dv_i - 90 * du_i * du_i * du_i * du_i * du_i + 24 * du_i * du_i * du_i * dv_i * dv_i * dv_i * dv_i - 180 * du_i * du_i * du_i * dv_i * dv_i + 240 * du_i * du_i * du_i + 8 * du_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i - 90 * du_i * dv_i * dv_i * dv_i * dv_i + 240 * du_i * dv_i * dv_i - 120 * du_i) * wkd_i / normalization * sigma_v0, 2))
-    sigma2_orth8_v0 = np.sum(np.power(2 * (8 * du_i * du_i * du_i * du_i * du_i * du_i * dv_i + 24 * du_i * du_i * du_i * du_i * dv_i * dv_i * dv_i - 90 * du_i * du_i * du_i * du_i * dv_i + 24 * du_i * du_i * dv_i * dv_i * dv_i * dv_i * dv_i - 180 * du_i * du_i * dv_i * dv_i * dv_i + 240 * du_i * du_i * dv_i + 8 * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i - 90 * dv_i * dv_i * dv_i * dv_i * dv_i + 240 * dv_i * dv_i * dv_i -120 * dv_i) * wkd_i / normalization * sigma_u0, 2))
+    sigma2_orth4_u0 = np.sum((2 * (4 * du_i * du_i * du_i + 4 * du_i * dv_i * dv_i - 6 * du_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_orth4_v0 = np.sum((2 * (4 * du_i * du_i * dv_i + 4 * dv_i * dv_i * dv_i - 6 * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_orth6_u0 = np.sum((2 * (6 * du_i * du_i * du_i * du_i * du_i + 12 * du_i * du_i * du_i * dv_i * dv_i - 32 * du_i * du_i * du_i + 6 * du_i * dv_i * dv_i * dv_i * dv_i - 32 * du_i * dv_i * dv_i + 24 * du_i) * wkd_i / normalization * sigma_u0)**2)
+    sigma2_orth6_v0 = np.sum((2 * (6 * du_i * du_i * du_i * du_i * dv_i + 12 * du_i * du_i * dv_i * dv_i * dv_i - 32 * du_i * du_i * dv_i + 6 * dv_i * dv_i * dv_i * dv_i * dv_i - 32 * dv_i * dv_i * dv_i + 24 * dv_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_orth8_u0 = np.sum((2 * (8 * du_i * du_i * du_i * du_i * du_i * du_i * du_i + 24 * du_i * du_i * du_i * du_i * du_i * dv_i * dv_i - 90 * du_i * du_i * du_i * du_i * du_i + 24 * du_i * du_i * du_i * dv_i * dv_i * dv_i * dv_i - 180 * du_i * du_i * du_i * dv_i * dv_i + 240 * du_i * du_i * du_i + 8 * du_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i - 90 * du_i * dv_i * dv_i * dv_i * dv_i + 240 * du_i * dv_i * dv_i - 120 * du_i) * wkd_i / normalization * sigma_v0)**2)
+    sigma2_orth8_v0 = np.sum((2 * (8 * du_i * du_i * du_i * du_i * du_i * du_i * dv_i + 24 * du_i * du_i * du_i * du_i * dv_i * dv_i * dv_i - 90 * du_i * du_i * du_i * du_i * dv_i + 24 * du_i * du_i * dv_i * dv_i * dv_i * dv_i * dv_i - 180 * du_i * du_i * dv_i * dv_i * dv_i + 240 * du_i * du_i * dv_i + 8 * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i * dv_i - 90 * dv_i * dv_i * dv_i * dv_i * dv_i + 240 * dv_i * dv_i * dv_i -120 * dv_i) * wkd_i / normalization * sigma_u0)**2)
 
     # add sigma_normalization
-    sigma2_e0_flux = np.power(e0_calc * sigma_normalization / normalization, 2)
-    sigma2_e1_flux = np.power(e1_calc * sigma_normalization / normalization, 2)
-    sigma2_e2_flux = np.power(e2_calc * sigma_normalization / normalization, 2)
+    sigma2_e0_flux = (e0_calc * sigma_normalization / normalization)**2
+    sigma2_e1_flux = (e1_calc * sigma_normalization / normalization)**2
+    sigma2_e2_flux = (e2_calc * sigma_normalization / normalization)**2
 
-    sigma2_zeta1_flux = np.power(zeta1_calc * sigma_normalization / normalization, 2)
-    sigma2_zeta2_flux = np.power(zeta2_calc * sigma_normalization / normalization, 2)
-    sigma2_delta1_flux = np.power(delta1_calc * sigma_normalization / normalization, 2)
-    sigma2_delta2_flux = np.power(delta2_calc * sigma_normalization / normalization, 2)
+    sigma2_zeta1_flux = (zeta1_calc * sigma_normalization / normalization)**2
+    sigma2_zeta2_flux = (zeta2_calc * sigma_normalization / normalization)**2
+    sigma2_delta1_flux = (delta1_calc * sigma_normalization / normalization)**2
+    sigma2_delta2_flux = (delta2_calc * sigma_normalization / normalization)**2
 
-    sigma2_orth4_flux = np.power(orth4_calc * sigma_normalization / normalization, 2)
-    sigma2_orth6_flux = np.power(orth6_calc * sigma_normalization / normalization, 2)
-    sigma2_orth8_flux = np.power(orth8_calc * sigma_normalization / normalization, 2)
+    sigma2_orth4_flux = (orth4_calc * sigma_normalization / normalization)**2
+    sigma2_orth6_flux = (orth6_calc * sigma_normalization / normalization)**2
+    sigma2_orth8_flux = (orth8_calc * sigma_normalization / normalization)**2
 
     # taking out the flux - e0 errors for now. lmfit finds that these two variables are highly correlated, so I'm probably missing a negative covariance term from the kernel that would bring this back in line. As it is, including sigma2_e0_flux leads to overestimated errors
     sigma_e0 = np.sqrt(sigma2_e0_data + sigma2_e0_u0 + sigma2_e0_v0)# + sigma2_e0_flux)
