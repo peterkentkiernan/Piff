@@ -13,8 +13,9 @@
 #    and/or other materials provided with the distribution.
 
 from __future__ import print_function
+print('before imports')
 import galsim
-import treegp
+print('after import galsim')
 import numpy as np
 import piff
 import os
@@ -25,6 +26,8 @@ from sklearn.model_selection import train_test_split
 
 from piff_test_helper import get_script_name, timer
 
+print('before import treegp')
+import treegp
 print('after all imports')
 
 kolmogorov = galsim.Kolmogorov(half_light_radius=1., flux=1.)
