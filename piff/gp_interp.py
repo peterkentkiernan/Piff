@@ -160,16 +160,23 @@ class GPInterp(Interp):
         :param y_err: Error of y. (n_samples, n_targets)
         :param logger:  A logger object for logging debug info. [default: None]
         """
+        print('start _fit')
         for i in range(self.nparams):
+            print('i = ',i)
             self.gps[i].initialize(X, y[:,i], y_err=y_err[:,i])
+            print('initialized')
             self.gps[i].solve()
+            print('solved')
+        print('done _fit')
 
     def _predict(self, Xstar):
         """ Predict responses given covariates.
         :param X:  The independent covariates at which to interpolate.  (n_samples, n_features).
         :returns:  Regressed parameters  (n_samples, n_targets)
         """
+        print('start _predict')
         ystar = np.array([gp.predict(Xstar) for gp in self.gps]).T
+        print('done _predict')
         return ystar
 
     def getProperties(self, star, logger=None):
@@ -206,6 +213,7 @@ class GPInterp(Interp):
             raise ValueError("numbers of kernel provided should be 1 (same for all parameters) "
                              "or equal to the number of params (%i), number kernel provided: %i"
                                 %((self.nparams,len(self.kernel_template))))
+        print('initialize.  Before treegp loop')
         self.gps = []
 
         for i in range(self.nparams):
@@ -219,8 +227,10 @@ class GPInterp(Interp):
                                         nbins=self.nbins,
                                         min_sep=self.min_sep, max_sep=self.max_sep)
             self.gps.append(gp)
+        print('made self.gps')
 
         self._init_theta = np.array([gp.kernel_template.theta for gp in self.gps])
+        print('made self._init_theta')
 
         return stars
 
@@ -230,6 +240,7 @@ class GPInterp(Interp):
         :param stars:    A list of Star instances to interpolate between
         :param logger:   A logger object for logging debug info. [default: None]
         """
+        print('start solve')
         X = np.array([self.getProperties(star) for star in stars])
         y = np.array([star.fit.params for star in stars])
         y_err = np.sqrt(np.array([star.fit.params_var for star in stars]))
@@ -246,6 +257,7 @@ class GPInterp(Interp):
 
         self._fit(X, y, y_err=y_err, logger=logger)
         self.kernels = [gp.kernel for gp in self.gps]
+        print('done solve')
 
     def interpolate(self, star, logger=None):
         """Perform the interpolation to find the interpolated parameter vector at some position.
@@ -330,6 +342,7 @@ class GPInterp(Interp):
         else:
             self.kernels = [ker for ker in self.kernel_template]
 
+        print('finish read.  Before treegp loop')
         self.gps = []
         for i in range(self.nparams):
 
@@ -343,4 +356,5 @@ class GPInterp(Interp):
             gp.kernel_template.clone_with_theta(fit_theta[i])
             gp.initialize(self._X, self._y[:,i], y_err=self._y_err[:,i])
             self.gps.append(gp)
+        print('made self.gps')
 

@@ -4,6 +4,7 @@ on:
     push:
         branches:
             - main
+            - test
             - releases/*
 
     pull_request:
@@ -101,7 +102,7 @@ jobs:
             - name: Run unit tests
               run: |
                 cd tests
-                coverage run -m pytest -v
+                coverage run -m pytest -v -s
                 cd ..  # N.B. This seems to happen automatically if omitted.
                        # Less confusing to include it explicitly.
 
