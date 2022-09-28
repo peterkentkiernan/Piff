@@ -102,8 +102,8 @@ jobs:
             - name: Run unit tests
               run: |
                 cd tests
-                python test_input.py
-                coverage run -m pytest -v -s
+                python test_gp_interp.py
+                #coverage run -m pytest -v -s
                 cd ..  # N.B. This seems to happen automatically if omitted.
                        # Less confusing to include it explicitly.
 
