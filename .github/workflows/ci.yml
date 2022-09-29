@@ -102,7 +102,7 @@ jobs:
             - name: Run unit tests
               run: |
                 cd tests
-                python test_gp_interp.py
+                python test_gsobject_model.py
                 #coverage run -m pytest -v -s
                 cd ..  # N.B. This seems to happen automatically if omitted.
                        # Less confusing to include it explicitly.
