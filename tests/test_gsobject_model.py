@@ -15,6 +15,7 @@
 from __future__ import print_function
 import galsim
 import treecorr
+import treegp
 import piff
 import numpy as np
 import os
