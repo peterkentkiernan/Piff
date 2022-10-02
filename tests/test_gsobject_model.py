@@ -893,4 +893,4 @@ if __name__ == '__main__':
     test_direct()
     test_var()
     test_fail()
-    test_gp()
+    #test_gp()
