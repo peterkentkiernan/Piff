@@ -879,6 +879,9 @@ def test_fail():
     with np.testing.assert_raises(RuntimeError):
         model3.fit(star3)
 
+def test_gp():
+    from test_gp_interp import test_gp_interp_isotropic
+    test_gp_interp_isotropic()
 
 if __name__ == '__main__':
     test_simple()
