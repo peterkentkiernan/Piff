@@ -1344,5 +1344,5 @@ if __name__ == '__main__':
     test_var()
     test_fail()
     #test_gp()
-    test_yaml()
+    #test_yaml()
     test_gp_interp_anisotropic()
