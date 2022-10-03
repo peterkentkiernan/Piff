@@ -1002,6 +1002,7 @@ def return_gp_predict(y, X1, X2, kernel, factor):
     :param kernel: sklearn.gaussian_process kernel.
     :param factor: Cholesky decomposition of sklearn.gaussian_process kernel.
     """
+    from scipy.linalg import cho_solve
     HT = kernel.__call__(X2, Y=X1)
     alpha = cho_solve(factor, y, overwrite_b=False)
     y_predict = np.dot(HT,alpha.reshape((len(alpha),1))).T[0]
@@ -1024,6 +1025,8 @@ def make_gaussian_random_fields(kernel, nstars, noise_level=1e-3,
     :param plot:        set to true to have plot of the field.
     :param vmax=8       max value for the color map.
     """
+    from scipy.linalg import cholesky
+    from sklearn.model_selection import train_test_split
     np.random.seed(seed)
 
     # generate star coordinate
