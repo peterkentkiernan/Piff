@@ -161,17 +161,12 @@ class GPInterp(Interp):
         :param logger:  A logger object for logging debug info. [default: None]
         """
         print('start _fit')
+        print('nparams = ',self.nparams)
         for i in range(self.nparams):
             print('i = ',i)
             self.gps[i].initialize(X, y[:,i], y_err=y_err[:,i])
             print('initialized')
-            #self.gps[i].solve()
-            self.gps[i]._init_theta = []
-            kernel = copy.deepcopy(self.gps[i].kernel)
-            self.gps[i]._init_theta.append(kernel.theta)
-            self.gps[i].kernel = self.gps[i]._fit(
-                self.gps[i].kernel, self.gps[i]._X,
-                self.gps[i]._y-self.gps[i]._mean-self.gps[i]._spatial_average, self.gps[i]._y_err)
+            self.gps[i].solve()
             print('solved')
         print('done _fit')
 
