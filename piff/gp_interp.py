@@ -165,8 +165,8 @@ class GPInterp(Interp):
             print('i = ',i)
             self.gps[i].initialize(X, y[:,i], y_err=y_err[:,i])
             print('initialized')
-            ###
-            self.gps[i].solve()
+            with galsim.utilities.single_threaded():
+                self.gps[i].solve()
             print('solved')
         print('done _fit')
 
