@@ -85,7 +85,14 @@ jobs:
               run: |
                 git clone https://github.com/gbernstein/pixmappy.git
                 cd pixmappy
-                python setup.py install
+                pip install .
+                cd ..
+
+            - name: Install master branch of treegp
+              run: |
+                git clone https://github.com/rmjarvis/treegp.git
+                cd treegp
+                pip install .
                 cd ..
 
             - name: List all installed packages for reference
