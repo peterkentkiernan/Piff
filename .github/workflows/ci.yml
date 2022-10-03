@@ -12,6 +12,8 @@ on:
             - main
             - releases/*
 
+    workflow_dispatch:
+
 jobs:
     build:
         runs-on: ${{ matrix.os }}
@@ -109,7 +111,7 @@ jobs:
             - name: Run unit tests
               run: |
                 cd tests
-                python test_gsobject_model.py
+                python -u test_gsobject_model.py
                 #coverage run -m pytest -v -s
                 cd ..  # N.B. This seems to happen automatically if omitted.
                        # Less confusing to include it explicitly.
