@@ -1303,24 +1303,24 @@ def test_gp_interp_anisotropic():
         L2 = get_correlation_length_matrix(20., 0.3, 0.3)
         invL2 = np.linalg.inv(L2)
 
-    if 0:
-        kernels = ["4e-4 * AnisotropicRBF(invLam={0!r})".format(invL1),
-                   "4e-4 * AnisotropicRBF(invLam={0!r})".format(invL1),
-                   "4e-4 * AnisotropicVonKarman(invLam={0!r})".format(invL2),
-                   "4e-4 * AnisotropicVonKarman(invLam={0!r})".format(invL2)]
+    kernels = ["4e-4 * AnisotropicRBF(invLam={0!r})".format(invL1),
+               "4e-4 * AnisotropicRBF(invLam={0!r})".format(invL1),
+               "4e-4 * AnisotropicVonKarman(invLam={0!r})".format(invL2),
+               "4e-4 * AnisotropicVonKarman(invLam={0!r})".format(invL2)]
 
     optimizer = ['none',
                  'anisotropic',
                  'none',
                  'anisotropic']
 
-    if 0:
-      for i in range(len(kernels)):
+    for i in range(len(kernels)):
 
+      if 1:
         stars_training, stars_validation = make_gaussian_random_fields(
                 kernels[i], nstars[i], xlim=-20, ylim=20,
                 seed=30352010, vmax=4e-2,
                 noise_level=noise_level)
+      if 0:
         check_gp(stars_training, stars_validation, kernels[i],
                  optimizer[i], min_sep=0., max_sep=5., nbins=11,
                  l0=20., atol=atol, rtol=rtol, plotting=False)
