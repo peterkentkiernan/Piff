@@ -883,6 +883,75 @@ def test_gp():
     from test_gp_interp import test_gp_interp_isotropic
     test_gp_interp_isotropic()
 
+@timer
+def test_yaml():
+
+    if __name__ == '__main__':
+        logger = piff.config.setup_logger(verbose=2)
+    else:
+        logger = piff.config.setup_logger(log_file='output/test_gp.log')
+
+    # Take DES test image, and test doing a psf run with GP interpolator
+    # Use config parser:
+    psf_file = os.path.join('output','gp_psf.fits')
+    config = {
+        'input' : {
+            # These can be regular strings
+            'image_file_name' : 'input/DECam_00241238_01.fits.fz',
+            # Or any GalSim str value type.  e.g. FormattedStr
+            'cat_file_name' : {
+                'type': 'FormattedStr',
+                'format': '%s/DECam_%08d_%02d_psfcat_tb_maxmag_17.0_magcut_3.0_findstars.fits',
+                'items': [
+                    'input',    # dir
+                    241238,     # expnum
+                    1           # chipnum
+                    ]
+                },
+
+            # What hdu is everything in?
+            'image_hdu' : 1,
+            'badpix_hdu' : 2,
+            'weight_hdu' : 3,
+            'cat_hdu' : 2,
+
+            # What columns in the catalog have things we need?
+            'x_col' : 'XWIN_IMAGE',
+            'y_col' : 'YWIN_IMAGE',
+            'ra' : 'TELRA',
+            'dec' : 'TELDEC',
+            'gain' : 'GAINA',
+            'sky_col' : 'BACKGROUND',
+
+            # How large should the postage stamp cutouts of the stars be?
+            'stamp_size' : 21,
+            },
+        'psf' : {
+            'model' : { 'type' : 'GSObjectModel',
+                        'fastfit' : True,
+                        'gsobj' : 'galsim.Gaussian(sigma=1.0)' },
+            'interp' : { 'type' : 'GPInterp',
+                         'keys' : ['u', 'v'],
+                         'optimizer' : 'none',
+                         'kernel' : 'RBF(200.0)'}
+            },
+        'output' : { 'file_name' : psf_file },
+        }
+
+    piff.piffify(config, logger)
+    psf = piff.read(psf_file)
+    assert type(psf.model) == piff.GSObjectModel
+    assert type(psf.interp) == piff.GPInterp
+    print('nstars = ',len(psf.stars))
+    target = psf.stars[17]
+    test_star = psf.interp.interpolate(target)
+    np.testing.assert_almost_equal(test_star.fit.params, target.fit.params, decimal=3)
+    # This should also work if the target doesn't have a fit yet.
+    print('interpolate ',piff.Star(target.data,None))
+    test_star = psf.interp.interpolate(piff.Star(target.data,None))
+    np.testing.assert_almost_equal(test_star.fit.params, target.fit.params, decimal=3)
+
+
 if __name__ == '__main__':
     test_simple()
     test_center()
@@ -894,3 +963,4 @@ if __name__ == '__main__':
     test_var()
     test_fail()
     #test_gp()
+    test_yaml()
