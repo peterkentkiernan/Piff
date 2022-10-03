@@ -255,7 +255,7 @@ class GPInterp(Interp):
             y_err = np.sqrt(y_err**2 + self.white_noise**2)
         self._y_err = y_err
 
-        self._fit(X, y, y_err=y_err, logger=logger)
+        #self._fit(X, y, y_err=y_err, logger=logger)
         self.kernels = [gp.kernel for gp in self.gps]
         print('done solve')
 
