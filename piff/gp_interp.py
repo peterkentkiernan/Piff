@@ -160,14 +160,18 @@ class GPInterp(Interp):
         :param y_err: Error of y. (n_samples, n_targets)
         :param logger:  A logger object for logging debug info. [default: None]
         """
-        from galsim.utilities import single_threaded
         print('start _fit')
         for i in range(self.nparams):
             print('i = ',i)
             self.gps[i].initialize(X, y[:,i], y_err=y_err[:,i])
             print('initialized')
-            with single_threaded():
-                self.gps[i].solve()
+            #self.gps[i].solve()
+            self.gps[i]._init_theta = []
+            kernel = copy.deepcopy(self.gps[i].kernel)
+            self.gps[i]._init_theta.append(kernel.theta)
+            self.gps[i].kernel = self.gps[i]._fit(
+                self.gps[i].kernel, self.gps[i]._X,
+                self.gps[i]._y-self.gps[i]._mean-self.gps[i]._spatial_average, self.gps[i]._y_err)
             print('solved')
         print('done _fit')
 
