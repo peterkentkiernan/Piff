@@ -165,7 +165,8 @@ class GPInterp(Interp):
             print('i = ',i)
             self.gps[i].initialize(X, y[:,i], y_err=y_err[:,i])
             print('initialized')
-            #self.gps[i].solve()
+            ###
+            self.gps[i].solve()
             print('solved')
         print('done _fit')
 
