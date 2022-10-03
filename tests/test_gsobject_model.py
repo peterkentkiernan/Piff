@@ -1117,8 +1117,8 @@ def check_gp(stars_training, stars_validation, kernel, optimizer,
 
         interp.initialize(stars_training)
         print('after initialize')
-        interp.solve(stars=stars_training, logger=None)
-        print('after solve')
+        #interp.solve(stars=stars_training, logger=None)
+        #print('after solve')
 
     if 0:
         if not test_star_fit:
