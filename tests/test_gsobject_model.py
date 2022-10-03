@@ -1104,7 +1104,7 @@ def check_gp(stars_training, stars_validation, kernel, optimizer,
              plotting=False, atol=4e-2, rtol=1e-3, test_star_fit=False):
     """ Solve for global PSF model, test it, and optionally display it.
     """
-    if 0:
+    if 1:
         print('start check_gp')
         interp = piff.GPInterp(kernel=kernel, optimizer=optimizer,
                            normalize=True, white_noise=0., l0=l0,
