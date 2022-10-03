@@ -160,12 +160,13 @@ class GPInterp(Interp):
         :param y_err: Error of y. (n_samples, n_targets)
         :param logger:  A logger object for logging debug info. [default: None]
         """
+        from galsim.utilities import single_threaded
         print('start _fit')
         for i in range(self.nparams):
             print('i = ',i)
             self.gps[i].initialize(X, y[:,i], y_err=y_err[:,i])
             print('initialized')
-            with galsim.utilities.single_threaded():
+            with single_threaded():
                 self.gps[i].solve()
             print('solved')
         print('done _fit')
