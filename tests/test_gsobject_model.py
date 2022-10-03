@@ -1297,7 +1297,7 @@ def test_gp_interp_anisotropic():
 
     noise_level = 1e-4
 
-    if 0:
+    if 1:
         L1 = get_correlation_length_matrix(4., 0.3, 0.3)
         invL1 = np.linalg.inv(L1)
         L2 = get_correlation_length_matrix(20., 0.3, 0.3)
