@@ -1291,6 +1291,8 @@ def test_gp_interp_isotropic():
 
 @timer
 def test_gp_interp_anisotropic():
+    import treecorr
+    treecorr.set_omp_threads(1)
 
     if __name__ == "__main__":
         atol = 4e-2
