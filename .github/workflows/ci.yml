@@ -101,7 +101,7 @@ jobs:
               run: |
                 git clone https://github.com/rmjarvis/TreeCorr.git
                 cd TreeCorr
-                git checkout test
+                #git checkout test
                 pip install .
                 cd ..
 
