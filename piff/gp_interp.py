@@ -22,7 +22,6 @@ import copy
 
 import treegp
 
-from galsim.utilities import single_threaded
 from .interp import Interp
 from .star import Star, StarFit
 
@@ -258,8 +257,7 @@ class GPInterp(Interp):
         self._y_err = y_err
 
         print('before self._fit')
-        with single_threaded():
-            self._fit(X, y, y_err=y_err, logger=logger)
+        self._fit(X, y, y_err=y_err, logger=logger)
         print('after self._fit')
         self.kernels = [gp.kernel for gp in self.gps]
         print('done solve')

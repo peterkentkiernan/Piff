@@ -1323,12 +1323,14 @@ def test_gp_interp_anisotropic():
 
     for i in range(len(kernels)):
 
-      if 1:
+      #if 1:
+      with galsim.utilities.single_threaded():
         stars_training, stars_validation = make_gaussian_random_fields(
                 kernels[i], nstars[i], xlim=-20, ylim=20,
                 seed=30352010, vmax=4e-2,
                 noise_level=noise_level)
-      if 1:
+      #if 1:
+      with galsim.utilities.single_threaded():
         check_gp(stars_training, stars_validation, kernels[i],
                  optimizer[i], min_sep=0., max_sep=5., nbins=11,
                  l0=20., atol=atol, rtol=rtol, plotting=False)
