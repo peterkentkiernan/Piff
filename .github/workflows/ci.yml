@@ -121,7 +121,7 @@ jobs:
             - name: Run unit tests
               run: |
                 cd tests
-                python -u test_gsobject_model.py
+                OMP_NUM_THREADS=1 python -u test_gsobject_model.py
                 #coverage run -m pytest -v -s
                 cd ..  # N.B. This seems to happen automatically if omitted.
                        # Less confusing to include it explicitly.
