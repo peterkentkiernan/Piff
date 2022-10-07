@@ -1348,4 +1348,6 @@ if __name__ == '__main__':
     #test_gp()
     #test_yaml()
 
-    test_gp_interp_anisotropic()
+    from galsim.utilities import single_threaded
+    with single_threaded():
+        test_gp_interp_anisotropic()
