@@ -83,6 +83,8 @@ jobs:
                 # Extra packages needed for testing
                 pip install -U nose codecov coverage pytest
 
+                pip install -U threadpoolctl
+
             - name: Install Pixmappy (not on pip)
               run: |
                 git clone https://github.com/gbernstein/pixmappy.git
