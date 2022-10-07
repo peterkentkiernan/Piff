@@ -22,6 +22,7 @@ import copy
 
 import treegp
 
+from galsim.utilities import single_threaded
 from .interp import Interp
 from .star import Star, StarFit
 
@@ -256,8 +257,11 @@ class GPInterp(Interp):
             y_err = np.sqrt(y_err**2 + self.white_noise**2)
         self._y_err = y_err
 
-        self._fit(X, y, y_err=y_err, logger=logger)
-        #self.kernels = [gp.kernel for gp in self.gps]
+        print('before self._fit')
+        with single_threaded():
+            self._fit(X, y, y_err=y_err, logger=logger)
+        print('after self._fit')
+        self.kernels = [gp.kernel for gp in self.gps]
         print('done solve')
 
     def interpolate(self, star, logger=None):
