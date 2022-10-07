@@ -160,6 +160,14 @@ class GPInterp(Interp):
         :param y_err: Error of y. (n_samples, n_targets)
         :param logger:  A logger object for logging debug info. [default: None]
         """
+        # If the treecorr libomp is different from galsim's libomp linkage, then
+        # calling treecorr from here can result in a seg fault.  I couldn't figure
+        # out a reliable way to avoid thiss -- it happened on GHA's MacOs system.
+        # But the parallel computation in TreeCorr here isn't actually particularly
+        # useful -- it's not a tall pole in this calculation.  So to be safe, just
+        # set the treecorr max_threads to 1 during this calculation.
+        from treecorr import set_max_omp_threads
+        set_max_omp_threads(1)
         print('start _fit')
         print('nparams = ',self.nparams)
         for i in range(self.nparams):
@@ -169,6 +177,7 @@ class GPInterp(Interp):
             self.gps[i].solve()
             print('solved')
         print('done _fit')
+        set_max_omp_threads(None)
 
     def _predict(self, Xstar):
         """ Predict responses given covariates.

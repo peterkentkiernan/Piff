@@ -1348,6 +1348,4 @@ if __name__ == '__main__':
     #test_gp()
     #test_yaml()
 
-    import treecorr
-    treecorr.set_max_omp_threads(1)
     test_gp_interp_anisotropic()

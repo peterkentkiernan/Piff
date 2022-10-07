@@ -92,18 +92,11 @@ jobs:
                 pip install .
                 cd ..
 
-            - name: Install master branch of treegp
-              run: |
-                git clone https://github.com/rmjarvis/treegp.git
-                cd treegp
-                pip install .
-                cd ..
-
-            - name: Install test branch of treecorr
+            - name: Install TreeCorr 4.3.1
               run: |
                 git clone https://github.com/rmjarvis/TreeCorr.git
                 cd TreeCorr
-                git checkout test
+                git checkout releases/4.3
                 pip install .
                 cd ..
 
@@ -121,7 +114,7 @@ jobs:
             - name: Run unit tests
               run: |
                 cd tests
-                OMP_NUM_THREADS=1 python -u test_gsobject_model.py
+                python -u test_gsobject_model.py
                 #coverage run -m pytest -v -s
                 cd ..  # N.B. This seems to happen automatically if omitted.
                        # Less confusing to include it explicitly.
