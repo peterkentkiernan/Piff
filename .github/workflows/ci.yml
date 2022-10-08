@@ -115,8 +115,8 @@ jobs:
               run: |
                 cd tests
                 #python -u test_gsobject_model.py
-                python -u test_gp_interp.py
-                #coverage run -m pytest -v -s
+                #python -u test_gp_interp.py
+                coverage run -m pytest -v -s
                 cd ..  # N.B. This seems to happen automatically if omitted.
                        # Less confusing to include it explicitly.
 
