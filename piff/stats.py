@@ -416,6 +416,7 @@ class RhoStats(Stats):
         :param logger:      A logger object for logging debug info. [default: None]
         """
         import treecorr
+        treecorr.set_max_omp_threads(1)
 
         logger = galsim.config.LoggerWrapper(logger)
         # get the shapes
