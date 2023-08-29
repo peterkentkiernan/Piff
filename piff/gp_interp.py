@@ -55,7 +55,7 @@ class GPInterp(Interp):
                          function. [default: ('u','v')]
     :param kernel:       A string that can be evaled to make a
                          ``sklearn.gaussian_process.kernels.Kernel`` object. Could be also a list
-                         of Kernels objects (one per PSF param).  The reprs of sklear Kernels
+                         of Kernels objects (one per PSF param).  The reprs of sklearn Kernels
                          will work, as well as the repr of a custom treegp VonKarman object.
                          [default: 'RBF(1)']
     :param optimizer:    Indicates which techniques to use for optimizing the kernel. Four options
@@ -107,18 +107,19 @@ class GPInterp(Interp):
         'none' : 'none',
         'likelihood' : 'log-likelihood',
         'isotropic' : 'two-pcf',
-        'anisotropic' : 'anisotropic'
+        'anisotropic' : 'anisotropic',
+        'grad-likelihood' : 'grad-likelihood'
     }
 
     def __init__(self, keys=('u','v'), kernel='RBF(1)',
-                 optimizer='isotropic', normalize=True, l0=3000.,
+                 optimizer='isotropic', normalize=True, p0=[3000.,0.,0.],
                  white_noise=0., n_neighbors=4, average_fits=None,
                  nbins=20, min_sep=None, max_sep=None,
                  rows=None, logger=None):
 
         self.keys = keys
         self.optimizer = optimizer
-        self.l0 = l0
+        self.p0 = p0
         self.n_neighbors = n_neighbors
         self.average_fits = average_fits
         self.nbins = nbins
@@ -142,8 +143,8 @@ class GPInterp(Interp):
         else:
             raise TypeError("kernel should be a string a list or a numpy.ndarray of string")
 
-        if self.optimizer not in ['anisotropic', 'isotropic', 'likelihood', 'none']:
-            raise ValueError("Only anisotropic, isotropic, likelihood, and " \
+        if self.optimizer not in ['anisotropic', 'isotropic', 'likelihood', 'grad-likelihood', 'none']:
+            raise ValueError("Only anisotropic, isotropic, likelihood, grad-likelihood, and " \
                              "none are supported for optimizer. Current value: %s"%(self.optimizer))
 
     @property
@@ -222,7 +223,7 @@ class GPInterp(Interp):
             gp = treegp.GPInterpolation(kernel=self.kernels[i],
                                         optimizer=self.treegp_alias[self.optimizer],
                                         normalize=self.normalize,
-                                        p0=[self.l0, 0, 0], white_noise=self.white_noise,
+                                        p0=self.p0, white_noise=self.white_noise,
                                         n_neighbors=self.n_neighbors,
                                         average_fits=self.average_fits, indice_meanify = i,
                                         nbins=self.nbins,
@@ -241,6 +242,7 @@ class GPInterp(Interp):
         """
         X = np.array([self.getProperties(star) for star in stars])
         y = np.array([star.fit.params for star in stars])
+        #print(val for val in y["w"] if val < 0)
         y_err = np.sqrt(np.array([star.fit.params_var for star in stars]))
 
         y = np.array([y[:,i] for i in self.rows]).T

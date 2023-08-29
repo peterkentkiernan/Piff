@@ -662,27 +662,31 @@ class StarData(object):
                         added.  [default: None, which means use orig_weight=weight]
     :param logger:      A logger object for logging debug info. [default: None]
     """
-    def __init__(self, image, image_pos, weight=None, pointing=None, field_pos=None,
+    def __init__(self, image = None, image_pos = None, weight=None, pointing=None, field_pos=None,
                  properties=None, property_types=None, orig_weight=None, logger=None,
                  _xyuv_set=False):
         # Save all of these as attributes.
         self.image = image
         self.image_pos = image_pos
         # Make sure we have a local wcs in case the provided image is more complex.
-        self.local_wcs = image.wcs.local(image_pos)
-        self.pixel_area = self.local_wcs.pixelArea()
-
-        if weight is None:
-            self.weight = galsim.Image(image.bounds, init_value=1, wcs=image.wcs, dtype=float)
-        elif type(weight) in [int, float]:
-            self.weight = galsim.Image(image.bounds, init_value=weight, wcs=image.wcs, dtype=float)
-        else:
-            self.weight = galsim.Image(weight, dtype=float, wcs=weight.wcs)
-
-        if orig_weight is None:
-            self.orig_weight = self.weight
-        else:
+        if image is None:
+            self.weight = None
             self.orig_weight = orig_weight
+        else:
+            self.local_wcs = image.wcs.local(image_pos)
+            self.pixel_area = self.local_wcs.pixelArea()
+
+            if weight is None:
+                self.weight = galsim.Image(image.bounds, init_value=1, wcs=image.wcs, dtype=float)
+            elif type(weight) in [int, float]:
+                self.weight = galsim.Image(image.bounds, init_value=weight, wcs=image.wcs, dtype=float)
+            else:
+                self.weight = galsim.Image(weight, dtype=float, wcs=weight.wcs)
+
+            if orig_weight is None:
+                self.orig_weight = self.weight
+            else:
+                self.orig_weight = orig_weight
 
         if properties is None:
             self.properties = {}
@@ -694,21 +698,27 @@ class StarData(object):
             self.property_types = property_types
 
         self.pointing = pointing
-        if field_pos is None:
+        if field_pos is None and image is not None:
             self.field_pos = self.calculateFieldPos(image_pos, image.wcs, pointing, self.properties)
         else:
             self.field_pos = field_pos
-        self.pixel_area = self.local_wcs.pixelArea()
+        if image is not None:
+            self.pixel_area = self.local_wcs.pixelArea()
 
         # Make sure the user didn't provide their own x,y,u,v in properties.
         for key in ['x', 'y', 'u', 'v']:
             if properties is not None and key in properties and not _xyuv_set:
                 raise TypeError("Cannot provide property %s in properties dict."%key)
-
-        self.properties['x'] = self.image_pos.x
-        self.properties['y'] = self.image_pos.y
-        self.properties['u'] = self.field_pos.x
-        self.properties['v'] = self.field_pos.y
+        if image is None and not _xyuv_set:
+            self.properties['x'] = None
+            self.properties['y'] = None
+            self.properties['u'] = None
+            self.properties['v'] = None
+        elif not _xyuv_set:
+            self.properties['x'] = self.image_pos.x
+            self.properties['y'] = self.image_pos.y
+            self.properties['u'] = self.field_pos.x
+            self.properties['v'] = self.field_pos.y
 
     def copy(self):
         return copy.deepcopy(self)
